@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Users;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -12,6 +13,7 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+Route::post('/registrar', [Users::class,'crear_usuario'])->name('registrar');
 
 Route::middleware([
     'auth:sanctum',

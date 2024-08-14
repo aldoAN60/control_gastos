@@ -9,6 +9,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Http\Request;
+use Hash;
 
 class User extends Authenticatable
 {
@@ -24,7 +26,9 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'nombre',
+        'apellido_paterno',
+        'apellido_materno',
         'email',
         'password',
     ];
@@ -39,6 +43,7 @@ class User extends Authenticatable
         'remember_token',
         'two_factor_recovery_codes',
         'two_factor_secret',
+        'google_id',
     ];
 
     /**
@@ -49,6 +54,22 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public static function crear_usuario(array $data){
+        try{
+            self::create([
+                'nombre' => $data['nombre'],
+                'apellido_paterno' => $data['apellido_paterno'],
+                'apellido_materno' => $data['apellido_materno'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+
+            return true;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
 
     /**
      * Get the attributes that should be cast.
