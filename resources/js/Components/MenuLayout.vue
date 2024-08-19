@@ -15,7 +15,7 @@ const secciones = ref([
     {
         label: 'Tarjetas de credito',
         icon: 'pi pi-credit-card',
-        route: 'dashboard',
+        route: 'TDC',
     },
     {
         label: 'Categorias',
@@ -73,7 +73,7 @@ const mostrar_acciones_usuario = (event) => {
                             <slot name="nombre_usuario"></slot>
                         </span> 
                     </Button>
-                    <Popover ref="op" unstyled="true" >
+                    <Popover ref="op" :unstyled="true" >
                     <template #container>
                         <div class="flex flex-col bg-dark-custom-bg-300  rounded-lg items-start gap-2 md:w-52 md:mt-2.5">
                             <span class="text-dark-custom-text-200 text-xs font-semibold p-2">Administrar Cuenta</span>

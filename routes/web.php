@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\tarjetas_credito;
 use App\Http\Controllers\Users;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -13,7 +14,11 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
 Route::post('/registrar', [Users::class,'crear_usuario'])->name('registrar');
+/** TARJETA DE CREDITO **/
+Route::get('/TDC/index',[tarjetas_credito::class,'index'])->name('TDC');
+Route::post('/TDC/registrar_TDC',[tarjetas_credito::class,'registrar_TDC'])->name('registrar_TDC');
 
 Route::middleware([
     'auth:sanctum',

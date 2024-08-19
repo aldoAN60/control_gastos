@@ -50,10 +50,6 @@ class Users extends Controller
         return redirect()->route('login')->with('data', $data);
     }
 
-    public function prueba(){
-        return view('login');
-    }
-
     /**
      * Display the specified resource.
      */

@@ -3,10 +3,17 @@ import { ref } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import Banner from '@/Components/Banner.vue';
 
+//componentes personalizados
+// componenetes de primeVue
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import MenuLayout from '@/Components/MenuLayout.vue';
+import Message from 'primevue/message';
+
 defineProps({
     title: String,
+    mensaje: String,
+    mensaje_visible: Boolean,
+    severity: String,
 });
 
 const showingNavigationDropdown = ref(false);
@@ -16,6 +23,10 @@ const nombre = 'Aldo Armenta'
 
 const logout = () => {
     router.post(route('logout'));
+};
+const handleMensajeEnviado = (data) => {
+  console.log('info enviada desde index TDC:', data);
+  // Aquí puedes manejar los datos recibidos como quieras
 };
 </script>
 
@@ -40,20 +51,28 @@ const logout = () => {
                             Dashboard
                         </ResponsiveNavLink>
                     </div>
-
-                    <!-- Responsive Settings Options -->
                 </div>
-
+                <section v-if="mensaje_visible">
+                    <Message :severity="severity"> {{ mensaje }}</Message>
+                </section>
             <!-- Page Heading -->
-            <header v-if="$slots.header" class="bg-white dark:bg-dark-custom-bg-200 shadow">
+            <header class="bg-white dark:bg-dark-custom-bg-200 shadow">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <slot name="header" />
+                    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                        <slot name="header" />
+                    </h2>
                 </div>
             </header>
-
+            
             <!-- Page Content -->
             <main>
-                <slot />
+                <div class="py-12">
+                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                        <div class="bg-white dark:bg-dark-custom-bg-300 dark:text-dark-custom-text-100 overflow-hidden shadow-xl sm:rounded-lg">
+                            <slot name="main_content"/>
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
     </div>
