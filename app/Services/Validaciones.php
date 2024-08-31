@@ -11,8 +11,8 @@ class Validaciones
             'banco_id' => 'required|integer|exists:bancos,id',
             'alias' => 'required|string|max:20|min:5',
             'limite_credito' => 'nullable|numeric|min:0',
-            'fecha_corte.number' => 'required|integer|min:1|max:30',
-            'fecha_pago.number' => 'required|integer|min:1|max:30',
+            'fecha_corte' => 'required|integer|min:1|max:30',
+            'fecha_pago' => 'required|integer|min:1|max:30',
         ];
 
         $messages = [
@@ -21,8 +21,10 @@ class Validaciones
             'alias.min' => 'El alias debe tener al menos 5 caracteres.',
             'limite_credito.numeric' => 'El límite de crédito debe ser un número válido.',
             'limite_credito.min' => 'El límite de crédito no puede ser negativo.',
-            'fecha_corte.number.number' => 'El día de corte debe estar entre 1 y 30.',
-            'fecha_pago.number.number' => 'El día de pago debe estar entre 1 y 30.',
+            'fecha_corte.required' => 'Selecciona el día en que se realiza el corte de tu tarjeta.',
+            'fecha_pago.required' => 'Selecciona el día en que debes realizar el pago de tu tarjeta.',
+            'fecha_corte' => 'El día de corte debe estar dentro del rango del 1 al 30. Selecciona un valor válido.',
+            'fecha_pago' => 'El día de pago debe estar dentro del rango del 1 al 30. Selecciona un valor válido.',
         ];
 
         $validator = Validator::make($data, $rules, $messages);

@@ -53,7 +53,7 @@ const handleMensajeEnviado = (data) => {
                     </div>
                 </div>
                 <section v-if="mensaje_visible">
-                    <Message :severity="severity"> {{ mensaje }}</Message>
+                    <Message :severity="severity" :life="3000"> {{ mensaje }}</Message>
                 </section>
             <!-- Page Heading -->
             <header class="bg-white dark:bg-dark-custom-bg-200 shadow">
@@ -68,7 +68,7 @@ const handleMensajeEnviado = (data) => {
             <main>
                 <div class="py-12">
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                        <div class="bg-white dark:bg-dark-custom-bg-300 dark:text-dark-custom-text-100 overflow-hidden shadow-xl sm:rounded-lg">
+                        <div class="dark:text-dark-custom-text-100 p-3">
                             <slot name="main_content"/>
                         </div>
                     </div>

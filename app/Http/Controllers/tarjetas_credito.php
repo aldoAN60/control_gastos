@@ -22,9 +22,10 @@ class tarjetas_credito extends Controller
         $bancos = Bancos::all()->map(function($banco) {
             return $banco->only('id', 'nombre');
         });
-
+        $tdc = tarjeta_credito::get_tdc();
         return Inertia::render('TDC/index', [
-            'bancos' => $bancos
+            'bancos' => $bancos,
+            'tdc' => $tdc,
         ]);
     }
     public function registrar_TDC(Request $request){
@@ -38,17 +39,16 @@ class tarjetas_credito extends Controller
 
         // Obtener los datos validados
         $data = $resultado_val['data'];
-
         $tarjeta_credito = tarjeta_credito::create([
             'user_id' => auth()->user()->id,
             'metodo_id' =>  $this->metodo_pago['tarjeta_credito'],
             'banco_id' => $data['banco_id'],
             'alias' => $data['alias'],
             'limite_credito' => $data['limite_credito'],
-            'fecha_corte' => $data['fecha_corte']['number'],
-            'fecha_pago' => $data['fecha_pago']['number'],
+            'fecha_corte' => $data['fecha_corte'],
+            'fecha_pago' => $data['fecha_pago'],
         ]);
-        if (!$tarjeta_credito) {
+        if ($tarjeta_credito) {
             $respuesta['exito'] = true;
             $respuesta['mensaje'] = '¡Tarjeta de crédito guardada correctamente!';
         } else {
