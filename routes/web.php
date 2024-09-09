@@ -27,6 +27,7 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
     
-Route::get('/TDC/index',[tarjetas_credito::class,'index'])->name('TDC');
-Route::post('/TDC/registrar_TDC',[tarjetas_credito::class,'registrar_TDC'])->name('registrar_TDC');
+    Route::get('/TDC/index',[tarjetas_credito::class,'index'])->name('tdc.index');
+    Route::post('/TDC/registrar_TDC',[tarjetas_credito::class,'registrar_TDC'])->name('tdc.registrar');
+    Route::delete('TDC/eliminar/{id}',[tarjetas_credito::class,'eliminar_tdc'])->name('tdc.eliminar');
 });

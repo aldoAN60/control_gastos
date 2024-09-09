@@ -8,6 +8,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import PrimeVue from 'primevue/config';
 import 'primeicons/primeicons.css';
 import { definePreset } from '@primevue/themes';
+import ConfirmationService from 'primevue/confirmationservice';
 
 
 import Aura from '@primevue/themes/aura';
@@ -259,6 +260,7 @@ createInertiaApp({
                 }
             })
             .use(ZiggyVue)
+            .use(ConfirmationService)
             .mount(el);
     },
     progress: {

@@ -30,25 +30,30 @@ class Users extends Controller
      */
     public function crear_usuario(Request $request)
     {
-        $userModel = new User();
         $valores = $request->validate([
             'nombre' => 'required|string|max:255|min:3',
             'apellido_paterno' => 'required|string|max:255',
             'apellido_materno' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-        ]); 
-
-        $crear_usuario = $userModel->crear_usuario($valores);
-        if (!$crear_usuario){
-        //return redirect()->route('register')->withErrors(['error' => 'No se pudo crear el usuario. Por favor, inténtalo de nuevo.']);
-            $mensaje = 'No se pudo crear el usuario. Por favor, inténtalo de nuevo.';
-            return redirect()->route('register',['data' => $mensaje]); //<- por si ya nada mas jala
-        }
-        $data['exito'] = $crear_usuario;
+        ]);
     
-        return redirect()->route('login')->with('data', $data);
+        // Hashear la contraseña antes de guardar
+        $valores['password'] = bcrypt($valores['password']);
+    
+        // Crear el usuario
+        User::create([
+            'nombre' => $valores['nombre'],
+            'apellido_paterno' => $valores['apellido_paterno'],
+            'apellido_materno' => $valores['apellido_materno'],
+            'email' => $valores['email'],
+            'password' => $valores['password'],
+        ]);
+    
+        // Redirigir al usuario a la página de login después de crear la cuenta
+        return redirect()->route('login');
     }
+    
 
     /**
      * Display the specified resource.

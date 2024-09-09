@@ -15,7 +15,7 @@ const secciones = ref([
     {
         label: 'Tarjetas de credito',
         icon: 'pi pi-credit-card',
-        route: 'TDC',
+        route: 'tdc.index',
     },
     {
         label: 'Categorias',

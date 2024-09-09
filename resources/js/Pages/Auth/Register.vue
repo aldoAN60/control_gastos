@@ -12,7 +12,6 @@ import { usePage } from '@inertiajs/vue3';
 
 const { props } = usePage();
 const data = props.flash.data || null; // Revisa si 'data' está presente
-console.log(props);
 
 
 const form = useForm({

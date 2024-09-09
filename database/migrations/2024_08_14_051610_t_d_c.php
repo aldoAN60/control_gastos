@@ -17,9 +17,10 @@ return new class extends Migration
             $table->integer('metodo_id')->nullable(false);
             $table->integer('banco_id')->nullable(false);
             $table->string('alias')->nullable();
-            $table->string('limite_credito')->nullable();
-            $table->string('fecha_corte')->nullable(false);
-            $table->string('fecha_pago')->nullable(false);
+            $table->integer('limite_credito')->nullable();
+            $table->integer('fecha_corte')->nullable(false);
+            $table->integer('fecha_pago')->nullable(false);
+            $table->integer('diferencia_dias')->nullable(false);
             $table->timestamps();
             
         });

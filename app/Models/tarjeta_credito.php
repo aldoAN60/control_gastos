@@ -16,10 +16,11 @@ class tarjeta_credito extends Model
         'limite_credito',
         'fecha_corte',
         'fecha_pago',
+        'diferencia_dias',
     ];
     use HasFactory;
     public static function get_tdc(){
-        $q_tdcs = tarjeta_credito::select('tdc.id', 'b.nombre', 'tdc.alias', 'tdc.limite_credito', 'tdc.fecha_corte', 'tdc.fecha_pago')
+        $q_tdcs = tarjeta_credito::select('tdc.id', 'b.nombre', 'tdc.alias', 'tdc.limite_credito', 'tdc.fecha_corte', 'tdc.diferencia_dias', 'tdc.fecha_pago')
                 ->join('bancos as b', 'b.id', '=', 'tdc.banco_id')
                 ->where('user_id', auth()->id()) // Usar el ID del usuario autenticado
                 ->get();

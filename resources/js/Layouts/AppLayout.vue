@@ -24,10 +24,7 @@ const nombre = 'Aldo Armenta'
 const logout = () => {
     router.post(route('logout'));
 };
-const handleMensajeEnviado = (data) => {
-  console.log('info enviada desde index TDC:', data);
-  // Aquí puedes manejar los datos recibidos como quieras
-};
+
 </script>
 
 <template>

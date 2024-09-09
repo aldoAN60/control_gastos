@@ -2,13 +2,13 @@
 //componentes personalizados
 import tdc_card from "./components/tdc_card.vue";
 import {ref} from "vue";
-import { useForm, usePage} from '@inertiajs/vue3';
+import {useForm, usePage} from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
-import ScrollPanel from 'primevue/scrollpanel';
+import DatePicker from 'primevue/datepicker';
 import Select from 'primevue/select';
 
 // variables reactivas
@@ -16,23 +16,57 @@ const mensaje_registro = ref('');
 const mensaje_registro_visible = ref(false);
 const severity = ref('');
 const visible = ref(false);
+
 // Obtén los datos de la página
 const { props } = usePage();
 const bancos = ref(props.bancos);
 const tdc = ref(props.tdc);
+
+
 // Banco seleccionado por el usuario
 const selected_banco = ref(null);
-const selected_dia_corte = ref(null);
-const selected_dia_pago = ref(null);
 
+const fechas_pc = ref(null);
 // Opciones para el Select basadas en los datos de bancos
 const bancoOptions = ref(
     bancos.value.map(banco => ({
-        value: banco.id,    
+        value: banco.id,
         label: banco.nombre,
     }))
 );
 
+const convert_string_to_date = (date_str) => {
+    const fecha = new Date(date_str);
+
+    if (isNaN(fecha.getTime())) {
+        console.error("Fecha no válida");
+        return null;
+    }
+
+    return fecha;
+};
+
+
+const diferencia_fc_fp = (fechas_pc) => {
+    const fecha_corte  = convert_string_to_date(fechas_pc.value[0]);
+    const fecha_pago = convert_string_to_date(fechas_pc.value[1]);
+
+        const diferenciaMilisegundos = fecha_pago - fecha_corte;
+        const diferenciaDias = Math.ceil(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
+
+        const fc = fecha_corte.getDate();
+        const fp = fecha_pago.getDate();
+
+        const fechas = {
+            'fecha_corte': fc,
+            'fecha_pago': fp,
+            'diferencia_dias': diferenciaDias,
+        };
+
+
+    return fechas;
+
+};
 
 const form = useForm({
     banco_id:null,
@@ -40,27 +74,19 @@ const form = useForm({
     limite_credito:null,
     fecha_corte:null,
     fecha_pago:null,
+    diferencia_dias:null,
 })
-const dia_corte_selecionado = ref();
-const dia_pago_selecionado = ref();
-const limite = ref();
-
-const dia_corte = ref(
-    Array.from({ length: 30 }, (_, i) => ({ number: i + 1 })) // Genera días del 1 al 30
-);
-const dia_pago = ref(
-    Array.from({ length: 30 }, (_, i) => ({ number: i + 1 })) // Genera días del 1 al 30
-);
 
 const errors = ref({}); // Define `errors` como un objeto reactivo
 const submit = () => {
+    const fechas = diferencia_fc_fp(fechas_pc);
+
     form.banco_id = selected_banco.value;
-    form.fecha_corte = selected_dia_corte?.value?.number || null;
-    form.fecha_pago = selected_dia_pago?.value?.number || null;
+    form.fecha_corte = fechas['fecha_corte'];
+    form.fecha_pago = fechas['fecha_pago'];
+    form.diferencia_dias = fechas['diferencia_dias'];
 
-
-    // form.fecha_corte = dia_corte.value;
-    form.post(route('registrar_TDC'), {
+    form.post(route('tdc.registrar'), {
         onError: (validationErrors) => {
             errors.value = validationErrors;
         },
@@ -70,6 +96,9 @@ const submit = () => {
             if (response.exito) {
                 mensaje_registro.value = response.mensaje;
                 severity.value = 'success';
+                
+                // Actualiza tdc con los datos más recientes
+                tdc.value = page.props.tdc;
             } else {
                 mensaje_registro.value = response.mensaje;
                 severity.value = 'error'
@@ -79,7 +108,16 @@ const submit = () => {
     });
 };
 
+// metodo que se llama cuando se elimina una TDC
+function actualizar_tdc(respuesta){
+    mensaje_registro.value = respuesta.mensaje;
+    severity.value = respuesta.severity;
+    mensaje_registro_visible.value = true;
 
+    if(respuesta.exito){
+        tdc.value = tdc.value.filter((tarjeta) => tarjeta.id !== respuesta.id);
+    }
+}
 
 
 </script>
@@ -108,7 +146,9 @@ const submit = () => {
                     :alias="item.alias" 
                     :limite_credito="item.limite_credito" 
                     :fecha_corte="item.fecha_corte" 
-                    :fecha_pago="item.fecha_pago" 
+                    :fecha_pago="item.fecha_pago"
+                    :diferencia_dias="item.diferencia_dias"
+                    @tarjeta_eliminada="actualizar_tdc"
                     />
                 </section>
      <!-- modal para registrar una tarjeta de credito -->
@@ -162,32 +202,10 @@ const submit = () => {
                                 <small v-if="errors.limite_credito" class="text-red-500 text-sm">{{ errors.limite_credito }} </small>
                             </section>
                         </div>
-                        <div class=" col-span-2 row-start-3  w-full">
-                            <div class="flex flex-col items-center" >
-                                <label for="dia-corte">Día de Corte</label>
-                                <Select 
-                                    v-model="selected_dia_corte" 
-                                    inputId="dia-corte" 
-                                    :options="dia_corte" 
-                                    optionLabel="number" 
-                                    class="!w-2/4 !md:w-20" 
-                                    :invalid="errors.fecha_corte != undefined" 
-                                />
-                                <small v-if="errors.fecha_corte" class="text-red-500 text-sm">{{ errors.fecha_corte }} </small>
-                            </div>
-                        </div>
-                        <div class="col-span-2 col-start-3 row-start-3 w-full">
-                            <div class="flex flex-col items-center" >
-                                <label for="dia-pago">Día de Pago</label>
-                                <Select 
-                                    v-model="selected_dia_pago" 
-                                    inputId="dia-pago" 
-                                    :options="dia_pago" 
-                                    optionLabel="number" 
-                                    class="!w-2/4 !md:w-20" 
-                                    :invalid="errors.fecha_pago != undefined" 
-                                />
-                                <small v-if="errors.fecha_pago" class="text-red-500 text-sm">{{ errors.fecha_pago }} </small>
+                        <div class="col-span-4 w-full min-h-24">
+                            <div class="flex flex-col items-start">
+                                <label for="banco" class="font-semibold w-full">fecha de corte y fecha de pago</label>
+                                <DatePicker class="!w-full"  v-model="fechas_pc" selectionMode="range" :manualInput="false" dateFormat="dd/mm/y"   :numberOfMonths="2"/>
                             </div>
                         </div>
                     </div>
