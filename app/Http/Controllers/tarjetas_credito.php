@@ -62,8 +62,7 @@ class tarjetas_credito extends Controller
     public function eliminar_tdc($id){
         $respuesta = [];
         $tdc = tarjeta_credito::findOrFail($id);
-        // if($tdc->delete()){
-            if(true){
+        if($tdc->delete()){
             $respuesta['exito'] = true;
             $respuesta['mensaje'] = '¡Tarjeta de crédito Eliminada correctamente!';
         }else{
