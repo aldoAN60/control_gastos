@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import Banner from '@/Components/Banner.vue';
+import messageStore from '@/stores/messageStore';
 
 //componentes personalizados
 // componenetes de primeVue
@@ -11,9 +12,6 @@ import Message from 'primevue/message';
 
 defineProps({
     title: String,
-    mensaje: String,
-    mensaje_visible: Boolean,
-    severity: String,
 });
 
 const showingNavigationDropdown = ref(false);
@@ -49,8 +47,10 @@ const logout = () => {
                         </ResponsiveNavLink>
                     </div>
                 </div>
-                <section v-if="mensaje_visible">
-                    <Message :severity="severity" :life="3000"> {{ mensaje }}</Message>
+                <section v-if="messageStore.mensaje_visible.value">
+                    <Message :severity="messageStore.severity.value" :life="3000" :key="messageStore.messageKey.value">
+                    {{ messageStore.mensaje.value }}
+                    </Message>
                 </section>
             <!-- Page Heading -->
             <header class="bg-white dark:bg-dark-custom-bg-200 shadow">

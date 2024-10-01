@@ -3,9 +3,7 @@
 import Card from 'primevue/card';
 import { computed} from 'vue';
 import Button from 'primevue/button';
-import { router } from '@inertiajs/vue3';
-import ConfirmDialog from 'primevue/confirmdialog';
-import { useConfirm } from "primevue/useconfirm";
+
 const props = defineProps({
     id: Number,
     nombre: String,
@@ -15,9 +13,8 @@ const props = defineProps({
     fecha_pago: Number,
     diferencia_dias: Number,
 });
-const emit = defineEmits(['tarjeta_eliminada']);
 
-const confirm = useConfirm();
+
 
 const limite_credito_format = computed(() => {
     if (!props.limite_credito) return "$ 0.00"; // Valor por defecto
@@ -33,25 +30,79 @@ const limite_credito_format = computed(() => {
     return formatted.replace('$', '$ ');
 });
 
-const formatFecha = (fecha, fc_es_mayor) => {
+/**
+ * Formatea las fechas de corte y pago basándose en el día del mes proporcionado y la fecha actual.
+ *
+ * @param {Object} fecha - Objeto que contiene las fechas de corte y pago.
+ * @param {number} fecha.fecha_corte - Día del mes que representa la fecha de corte (1-31).
+ * @param {number} fecha.fecha_pago - Día del mes que representa la fecha de pago (1-31).
+ * @returns {Object} - Objeto con las fechas formateadas para la fecha de corte y fecha de pago.
+ */
+const formatFecha = (fecha) => {
     if (!fecha) return "00-00-00"; // Validación si la fecha no está definida
 
     const fecha_actual = new Date();
-    if(fc_es_mayor){
-        const mes_anterior = new Date(fecha_actual);
-        mes_anterior.setMonth(fecha_actual.getMonth() - 1);
-
-        const month = mes_anterior.toLocaleString('default', {month:'short'});
-        
-        return `${fecha} ${month}`;
-    }else{
-        const month = fecha_actual.toLocaleString('default', {month:'short'});
-
-        return `${fecha} ${month}`;
-    }
     
+    let fp_es_mayor_fa = fecha.fecha_pago < fecha_actual.getDate() ? 'menor' : 'mayor' ;
+
+    let fecha_corte = null;
+    let fecha_pago = null;
+
+    let fc_es_mayor_fp = fecha.fecha_corte > fecha.fecha_pago ? true : false;
+    
+
+    if(fp_es_mayor_fa == 'mayor'){
+        const mes_actual = new Date(fecha_actual);
+        mes_actual.setMonth(fecha_actual.getMonth());
+
+        const mes = mes_actual.toLocaleString('default', {month:'short'});
+        fecha_pago = `${fecha.fecha_pago} ${mes}`;
+
+    }else if(fp_es_mayor_fa == 'menor'){
+
+        const mes_siguiente = new Date(fecha_actual);
+        mes_siguiente.setMonth(fecha_actual.getMonth() + 1);
+
+        const mes = mes_siguiente.toLocaleString('default', {month:'short'});
+        fecha_pago = `${fecha.fecha_pago} ${mes}`; 
+
+    }
+
+    if(fp_es_mayor_fa == 'mayor'){
+        const mes_actual = new Date(fecha_actual);
+        mes_actual.setMonth(fecha_actual.getMonth() - 1);
+
+        const mes = mes_actual.toLocaleString('default', {month:'short'});
+        fecha_corte = `${fecha.fecha_corte} ${mes}`; 
+
+    }else if(fp_es_mayor_fa == 'menor' && !fc_es_mayor_fp){
+        const mes_siguiente = new Date(fecha_actual);
+        mes_siguiente.setMonth(fecha_actual.getMonth() + 1);
+
+        const mes = mes_siguiente.toLocaleString('default', {month:'short'});
+        fecha_corte = `${fecha.fecha_corte} ${mes}`; 
+    }else{
+        const mes_siguiente = new Date(fecha_actual);
+        mes_siguiente.setMonth(fecha_actual.getMonth());
+
+        const mes = mes_siguiente.toLocaleString('default', {month:'short'});
+        fecha_corte = `${fecha.fecha_corte} ${mes}`; 
+    }
+
+        const fechas_format = {
+            'fecha_corte': fecha_corte,
+            'fecha_pago': fecha_pago,
+        };
+        return fechas_format;
 };
 
+/**
+ * Calcula y devuelve las fechas de corte y pago en formato legible basadas en los días proporcionados.
+ *
+ * @param {number} fc - Día del mes que representa la fecha de corte (1-31).
+ * @param {number} fp - Día del mes que representa la fecha de pago (1-31).
+ * @returns {Object} - Objeto con los detalles formateados para la fecha de corte y fecha de pago.
+ */
 const get_diferencia_fc_fp = (fc, fp) => {
     
     let respuesta = {
@@ -64,62 +115,28 @@ const get_diferencia_fc_fp = (fc, fp) => {
             'fp' : null
         }
     };
+    let fechas = {
+        'fecha_corte': fc,
+        'fecha_pago': fp
+    };
 
-    respuesta['fecha_corte']['fc'] = formatFecha(fc, false);
-    respuesta['fecha_pago']['fp'] = formatFecha(fp, false);
-
-    if(fc > fp){
-        respuesta['fecha_corte']['fc'] = formatFecha(fc, true);
-    }
+    let formato = formatFecha(fechas);
+    respuesta['fecha_corte']['fc'] = formato['fecha_corte'];
+    respuesta['fecha_pago']['fp'] = formato['fecha_pago'];
     
     return respuesta
 };
+
 const fechas_fc_fp = get_diferencia_fc_fp(props.fecha_corte,props.fecha_pago);
 
+const emit = defineEmits(['tarjeta_eliminar']);
+
 const eliminar_tarjeta = () => {
-    confirm.require({
-        message: '¿Deseas eliminar esta tarjeta?',
-        header: 'Eliminar',
-        icon: 'pi pi-info-circle',
-        rejectLabel: 'Cancelar',
-        rejectProps: {
-            label: 'Cancelar',
-            severity: 'secondary',
-            outlined: true
-        },
-        acceptProps: {
-            label: 'Eliminar',
-            severity: 'danger'
-        },
-        accept: () => {
-            eliminar(props.id);
-        },
-        reject: () => {
-            console.log("no chidote pa");
-        }
-    });
+    // console.log({ id: props.id, nombre: props.nombre });
+  emit('tarjeta_eliminar', { id: props.id, nombre: props.nombre });
 };
-//eliminar tdc
-function eliminar(id) {
-        router.delete(route('tdc.eliminar', id), {
-            onSuccess: (page) => {
-                //respuesta desde el backend 
-                const respuesta = page.props.flash.data;
-                //asignacion del id de la tarjeta que se elimino
-                respuesta.id = id;
-                if(respuesta.exito){
-                    respuesta.severity = 'info';
-
-                }else{
-                    respuesta.severity = 'error';
-
-                }
 
 
-                emit('tarjeta_eliminada', respuesta);
-            }
-        });
-    }
 
 </script>
 <template>
@@ -130,7 +147,7 @@ function eliminar(id) {
                     <p>{{ alias }}</p>
                     <div class="flex flex-row gap-2">
                         <Button icon="pi pi-pen-to-square" aria-label="Editar" size="small" />
-                            <ConfirmDialog></ConfirmDialog>
+                            
                             <Button @click="eliminar_tarjeta()" label="Delete" severity="danger" outlined></Button>
                     </div>
             </div>
