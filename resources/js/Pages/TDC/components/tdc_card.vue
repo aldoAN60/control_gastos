@@ -43,7 +43,7 @@ const formatFecha = (fecha) => {
 
     const fecha_actual = new Date();
     
-    let fp_es_mayor_fa = fecha.fecha_pago < fecha_actual.getDate() ? 'menor' : 'mayor' ;
+    let fa_es_mayor_fp = fecha_actual.getDate() > fecha.fecha_pago  ? 'mayor' : 'menor' ;
 
     let fecha_corte = null;
     let fecha_pago = null;
@@ -51,39 +51,40 @@ const formatFecha = (fecha) => {
     let fc_es_mayor_fp = fecha.fecha_corte > fecha.fecha_pago ? true : false;
     
 
-    if(fp_es_mayor_fa == 'mayor'){
+    if(fa_es_mayor_fp == 'mayor'){
         const mes_actual = new Date(fecha_actual);
-        mes_actual.setMonth(fecha_actual.getMonth());
+        mes_actual.setMonth(fecha_actual.getMonth()  + 1);
 
         const mes = mes_actual.toLocaleString('default', {month:'short'});
         fecha_pago = `${fecha.fecha_pago} ${mes}`;
 
-    }else if(fp_es_mayor_fa == 'menor'){
+    }else if(fa_es_mayor_fp == 'menor'){
 
         const mes_siguiente = new Date(fecha_actual);
-        mes_siguiente.setMonth(fecha_actual.getMonth() + 1);
+        mes_siguiente.setMonth(fecha_actual.getMonth());
 
         const mes = mes_siguiente.toLocaleString('default', {month:'short'});
         fecha_pago = `${fecha.fecha_pago} ${mes}`; 
 
     }
 
-    if(fp_es_mayor_fa == 'mayor'){
+    if(fa_es_mayor_fp == 'mayor'){
+        
         const mes_actual = new Date(fecha_actual);
-        mes_actual.setMonth(fecha_actual.getMonth() - 1);
-
+        mes_actual.setMonth(fecha_actual.getMonth() + 1);
+        if(fc_es_mayor_fp){
+            mes_actual.setMonth(fecha_actual.getMonth());
+        }
         const mes = mes_actual.toLocaleString('default', {month:'short'});
         fecha_corte = `${fecha.fecha_corte} ${mes}`; 
 
-    }else if(fp_es_mayor_fa == 'menor' && !fc_es_mayor_fp){
-        const mes_siguiente = new Date(fecha_actual);
-        mes_siguiente.setMonth(fecha_actual.getMonth() + 1);
-
-        const mes = mes_siguiente.toLocaleString('default', {month:'short'});
-        fecha_corte = `${fecha.fecha_corte} ${mes}`; 
-    }else{
+    }else if(fa_es_mayor_fp == 'menor'){
         const mes_siguiente = new Date(fecha_actual);
         mes_siguiente.setMonth(fecha_actual.getMonth());
+
+        if(fc_es_mayor_fp){
+            mes_siguiente.setMonth(fecha_actual.getMonth() - 1);
+        }
 
         const mes = mes_siguiente.toLocaleString('default', {month:'short'});
         fecha_corte = `${fecha.fecha_corte} ${mes}`; 
@@ -129,25 +130,34 @@ const get_diferencia_fc_fp = (fc, fp) => {
 
 const fechas_fc_fp = get_diferencia_fc_fp(props.fecha_corte,props.fecha_pago);
 
-const emit = defineEmits(['tarjeta_eliminar']);
+const emit = defineEmits(['tarjeta_eliminar','actualizar_tarjeta']);
 
 const eliminar_tarjeta = () => {
-    // console.log({ id: props.id, nombre: props.nombre });
   emit('tarjeta_eliminar', { id: props.id, nombre: props.nombre });
 };
+
+function actualizar_tarjeta(){
+    emit('actualizar_tarjeta',{
+    id: props.id,
+    nombre: props.nombre,
+    alias: props.alias,
+    limite_credito: props.limite_credito,
+    fecha_corte: props.fecha_corte,
+    fecha_pago: props.fecha_pago,
+    });
+}
 
 
 
 </script>
 <template>
-    <section class="snap-start basis-4/12 shrink-0 mb-6">
+    <section @click="actualizar_tarjeta" class="snap-start basis-4/12 shrink-0 mb-6 min-w-full">
         <Card>
             <template #title>
                 <div class="flex flex-row justify-between items-end">
                     <p>{{ alias }}</p>
                     <div class="flex flex-row gap-2">
                         <Button icon="pi pi-pen-to-square" aria-label="Editar" size="small" />
-                            
                             <Button @click="eliminar_tarjeta()" label="Delete" severity="danger" outlined></Button>
                     </div>
             </div>

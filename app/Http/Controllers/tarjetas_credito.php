@@ -47,7 +47,6 @@ class tarjetas_credito extends Controller
             'limite_credito' => $data['limite_credito'],
             'fecha_corte' => $data['fecha_corte'],
             'fecha_pago' => $data['fecha_pago'],
-            'diferencia_dias' => $data['diferencia_dias'],
         ]);
         if ($tarjeta_credito) {
             $respuesta['exito'] = true;
@@ -58,6 +57,41 @@ class tarjetas_credito extends Controller
         }
 
         return redirect()->route('tdc.index')->with('data', $respuesta);
+    }
+    public function actualizar_tdc(Request $request){
+        
+        $respuesta = [];
+        $resultado_val = $this->validaciones->tdc($request->all());
+        if (!$resultado_val['exito']) {
+            return back()->withErrors($resultado_val['mensajes'])->withInput();
+        }
+        // Obtener los datos validados
+        $data = $resultado_val['data'];
+        $tarjeta_credito = tarjeta_credito::find($request->id);
+
+        if(!$tarjeta_credito){
+            $respuesta['mensaje'] = 'No existe la tarjeta de credito.';
+            return back()->withErrors($respuesta['mensaje'])->withInput();
+        }
+
+        $tarjeta_credito->banco_id = $data['banco_id'];
+        $tarjeta_credito->alias = $data['alias'];
+        $tarjeta_credito->limite_credito = $data['limite_credito'];
+        $tarjeta_credito->fecha_corte = $data['fecha_corte'];
+        $tarjeta_credito->fecha_pago = $data['fecha_pago'];
+
+        if ($tarjeta_credito->save()) {
+            $respuesta['exito'] = true;
+            $respuesta['mensaje'] = '¡Tarjeta de crédito Actualizada correctamente!';
+        } else {
+            $respuesta['exito'] = false;
+            $respuesta['mensaje'] = 'No se pudo actualizar la tarjeta de crédito, por favor intentalo más tarde';
+        }
+
+        return redirect()->route('tdc.index')->with('data', $respuesta);
+
+        
+
     }
     public function eliminar_tdc($id){
         $respuesta = [];

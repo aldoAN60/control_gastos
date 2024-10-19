@@ -13,7 +13,6 @@ class Validaciones
             'limite_credito' => 'nullable|numeric|min:0',
             'fecha_corte' => 'required|integer|min:1|max:31',
             'fecha_pago' => 'required|integer|min:1|max:31',
-            'diferencia_dias' => 'required|integer|min:1|max:365',
         ];
 
         $messages = [

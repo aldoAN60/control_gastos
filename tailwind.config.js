@@ -40,6 +40,9 @@ export default {
                 'dark-custom-text-200': '#e0e0e0',
                 
             },
+            height: {
+                '128': '28rem',
+            },
             
         },
     },

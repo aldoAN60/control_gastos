@@ -28,6 +28,8 @@ Route::middleware([
     })->name('dashboard');
     
     Route::get('/TDC/index',[tarjetas_credito::class,'index'])->name('tdc.index');
+    Route::put('/TDC/actualizar/{id}', [tarjetas_credito::class, 'actualizar_tdc'])->name('tdc.actualizar');
+
     Route::post('/TDC/registrar_TDC',[tarjetas_credito::class,'registrar_TDC'])->name('tdc.registrar');
     Route::delete('TDC/eliminar/{id}',[tarjetas_credito::class,'eliminar_tdc'])->name('tdc.eliminar');
 });

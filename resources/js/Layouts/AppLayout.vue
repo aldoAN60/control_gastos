@@ -64,8 +64,8 @@ const logout = () => {
             <!-- Page Content -->
             <main>
                 <div class="py-12">
-                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                        <div class="dark:text-dark-custom-text-100 p-3">
+                    <div class="md:mx-8">
+                        <div class="dark:bg-dark-custom-bg-200 text-dark-custom-text-100 p-6 rounded-2xl">
                             <slot name="main_content"/>
                         </div>
                     </div>

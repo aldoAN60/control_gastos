@@ -20,7 +20,6 @@ return new class extends Migration
             $table->integer('limite_credito')->nullable();
             $table->integer('fecha_corte')->nullable(false);
             $table->integer('fecha_pago')->nullable(false);
-            $table->integer('diferencia_dias')->nullable(false);
             $table->timestamps();
             
         });
