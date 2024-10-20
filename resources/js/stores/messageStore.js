@@ -1,9 +1,9 @@
 // messageStore.js
 import { ref } from 'vue';
 
-const mensaje = ref('hola');
+const mensaje = ref('');
 const mensaje_visible = ref(false);
-const severity = ref('info');
+const severity = ref('');
 const messageKey = ref(0);  // Clave única para controlar el renderizado del mensaje
 
 // Función para actualizar el mensaje

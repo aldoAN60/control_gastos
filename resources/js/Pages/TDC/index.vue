@@ -1,6 +1,7 @@
 <script setup>
 //componentes personalizados
 import tdc_card from "./components/tdc_card.vue";
+import tdc_form_update from "./components/tdc_form_update.vue";
 import { ref } from "vue";
 import { useForm, usePage } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
@@ -27,8 +28,6 @@ const mostrar_panel_act_tarjeta = ref(false);
 const { props } = usePage();
 const bancos = ref(props.bancos);
 const tdc = ref(props.tdc);
-
-
 // Banco seleccionado por el usuario
 const selected_banco = ref(null);
 
@@ -111,7 +110,7 @@ const submit = () => {
             const response = page.props.flash.data;
             if (response.exito) {
                 mensaje_registro.value = response.mensaje;
-                severity.value = "success";
+                severity.value = response.severity;
                 form.reset();
                 selected_banco.value = null;
                 fechas_pc.value = null;
@@ -121,7 +120,7 @@ const submit = () => {
                 tdc.value = page.props.tdc;
             } else {
                 mensaje_registro.value = response.mensaje;
-                severity.value = "error";
+                severity.value = response.severity
 
                 messageStore.mostrarMensaje(response.mensaje, severity.value);
             }
@@ -131,9 +130,10 @@ const submit = () => {
 
 const confirm = useConfirm();
 const confirmarEliminar = (tarjeta) => {
+    console.table(tarjeta);
     // Almacenar la tarjeta seleccionada para eliminar
     confirm.require({
-        message: `¿Estás seguro de eliminar la tarjeta ${tarjeta.nombre}?`,
+        message: `¿Estás seguro de eliminar la tarjeta ${tarjeta.alias}?`,
         header: "Eliminar",
         icon: "pi pi-info-circle",
         rejectLabel: "Cancelar",
@@ -163,37 +163,45 @@ function eliminarTarjeta(id) {
 
             // Determinamos el tipo de mensaje según el estado de la eliminación.
             if (respuesta.exito) {
-                respuesta.severity = "info";
-            } else {
-                respuesta.severity = "error";
+                actualizar_arr_tarjetas('DELETE',respuesta.tarjeta_id);
             }
-            actualizar_arr_tarjetas(respuesta);
+            mensaje_registro.value = respuesta.mensaje;
+            severity.value = respuesta.severity;
+            messageStore.mostrarMensaje(respuesta.mensaje, severity.value);
         },
     });
 }
+const tdc_card_key = ref(0);
 // metodo que se llama cuando se elimina una TDC
-function actualizar_arr_tarjetas(respuesta) {
-    messageStore.mostrarMensaje(respuesta.mensaje, respuesta.severity);
+function actualizar_arr_tarjetas(tipo_request, data = false) {
 
-    if (respuesta.exito) {
+    if (tipo_request === 'DELETE') {
         tdc.value = tdc.value.filter(
-            (tarjeta) => tarjeta.id !== respuesta.tarjeta_id
+            (tarjeta) => tarjeta.id !== data
         );
+    }
+    if(tipo_request === 'PUT'){
+        tdc.value = tdc.value.map(tarjeta => {
+            if(tarjeta.id == data.id){
+                return {
+                    ...tarjeta,
+                    fecha_corte: data.fecha_corte,
+                    fecha_pago: data.fecha_pago,
+                    alias: data.alias,
+                    limite_credito: data.limite_credito,
+                };
+            }
+            return tarjeta; // Devolver la tarjeta original si no coincide el id
+        });
+        tdc_card_key.value++;
     }
 }
 function obtener_banco(label) {
   const bancoEncontrado = bancoOptions.value.find((banco) => banco.label === label);
   return bancoEncontrado ? bancoEncontrado.value : null;
 }
-
-const alias = ref(null);
-const limite_credito = ref(null);
-const fecha_corte = ref(null);
-const fecha_pago = ref(null);
-
-function actualizar_tarjeta(tarjeta){
-    mostrar_panel_act_tarjeta.value = true;
-
+function llenar_form_act_tdc(tarjeta){
+    
     const id_banco = obtener_banco(tarjeta.nombre);
 
     selected_banco.value = id_banco;
@@ -201,29 +209,12 @@ function actualizar_tarjeta(tarjeta){
     form_actualizar_tdc.banco_id = selected_banco.value ;
     form_actualizar_tdc.alias = tarjeta.alias;
     form_actualizar_tdc.limite_credito = tarjeta.limite_credito;
-
-    let fecha_actual = new Date(); // Fecha base actual
-
-    // Crear copias independientes para cada fecha
-    let fecha_pago = new Date(fecha_actual);   // Copia de `fecha_actual` para `fecha_pago`
-    let fecha_corte = new Date(fecha_actual);  // Copia de `fecha_actual` para `fecha_corte`
-
-    // Asignar días específicos a cada fecha
-    fecha_pago.setDate(tarjeta.fecha_pago);    // `fecha_pago` obtiene el día de `tarjeta.fecha_pago`
-    fecha_corte.setDate(tarjeta.fecha_corte);  // `fecha_corte` obtiene el día de `tarjeta.fecha_corte`
-
-    fecha_corte_act.value = fecha_corte;
-     fecha_pago_act.value = fecha_pago;
-
+    form_actualizar_tdc.fecha_corte = tarjeta.fecha_corte;
+    form_actualizar_tdc.fecha_pago = tarjeta.fecha_pago;
+    mostrar_panel_act_tarjeta.value = true;
+    
 }
-
-function act_tarjeta(){
-    let fecha_corte = fecha_corte_act.value.getDate();
-    let fecha_pago = fecha_pago_act.value.getDate();
-
-    form_actualizar_tdc.fecha_corte = fecha_corte;
-    form_actualizar_tdc.fecha_pago = fecha_pago;
-
+function actualizar_tarjeta(){
     form_actualizar_tdc.put(route("tdc.actualizar",form_actualizar_tdc.id),{
         onError: (validationErrors) => {
             errors.value = validationErrors;
@@ -231,23 +222,18 @@ function act_tarjeta(){
         onSuccess: (page) => {
             const response = page.props.flash.data;
             if (response.exito) {
-                severity.value = "success";
+                severity.value = response.severity;
+                mostrar_panel_act_tarjeta.value = false;
                 messageStore.mostrarMensaje(response.mensaje, severity.value);
                 // Actualiza tdc con los datos más recientes
-                tdc.value = page.props.tdc;
+                actualizar_arr_tarjetas('PUT',response.data);
             } else {
                 mensaje_registro.value = response.mensaje;
-                severity.value = "error";
-
+                severity.value = response.severity;
                 messageStore.mostrarMensaje(response.mensaje, severity.value);
             }
         },
     });
-    
-}
-
-function limpiar_formularios(){
-    selected_banco.value = null;
     
 }
 </script>
@@ -277,7 +263,7 @@ function limpiar_formularios(){
                     <section class="flex flex-col items-start gap-3 overflow-y-scroll h-128  max-w-sm  px-3">
                         <tdc_card
                             v-for="item in tdc"
-                            :key="item.id"
+                            :key="tdc_card_key"
                             :id="item.id"
                             :nombre="item.nombre"
                             :alias="item.alias"
@@ -286,109 +272,17 @@ function limpiar_formularios(){
                             :fecha_pago="item.fecha_pago"
                             :diferencia_dias="item.diferencia_dias"
                             @tarjeta_eliminar="confirmarEliminar"
-                            @actualizar_tarjeta = "actualizar_tarjeta"
+                            @emitir_tdc_data = "llenar_form_act_tdc"
                         />
                     </section>
                     <section v-show="mostrar_panel_act_tarjeta" class="col-span-2" >
-                        <picture style="display: flex; flex-direction: row; justify-content: center;">
-                            <img :src="amex_card" alt="amex" style="height: 150px; width: 200px;">
-                        </picture>
-                        <form @submit.prevent="submit">
-                            <div class="grid grid-cols-4 grid-rows-3 place-items-center gap-x-4">
-                                <div class="col-span-4 w-full min-h-24">
-                                    <div class="flex flex-col items-start">
-                                        <label for="banco" class="font-semibold w-28"
-                                            >Bancos</label
-                                        >
-                                        <Select
-                                            v-model="selected_banco"
-                                            :options="bancoOptions"
-                                            inputId="banco"
-                                            filter
-                                            optionLabel="label"
-                                            optionValue="value"
-                                            placeholder="Seleccione un banco"
-                                            checkmark
-                                            :highlightOnSelect="false"
-                                            class="!w-full !md:w-56"
-                                            :invalid="errors.banco_id != undefined"
-                                        />
-                                    </div>
-                                    <small
-                                        v-if="errors.banco_id"
-                                        class="text-red-500 text-sm"
-                                        >{{ errors.banco_id }}</small
-                                    >
-                                </div>
-                                <div class="col-span-2 row-start-2 h-4/5 w-full">
-                                    <section class="flex flex-col items-center ">
-                                        <label for="alias" class="font-semibold w-28">Alias</label>
-                                        <InputText
-                                            id="alias"
-                                            class="flex-auto"
-                                            v-model="form_actualizar_tdc.alias"
-                                            autocomplete="off"
-                                            :invalid="errors.alias != undefined"
-                                        />
-                                        <small
-                                            v-if="errors.alias"
-                                            class="text-red-500 text-sm"
-                                            >{{ errors.alias }}
-                                        </small>
-                                    </section>
-                                </div>
-                                <div class="col-span-2 col-start-3 row-start-2 h-4/5 w-full">
-                                    <section class="flex flex-col items-center ">
-                                        <label for="limite" class="font-semibold w-28"
-                                            >Límite</label
-                                        >
-                                        <InputNumber
-                                            v-model="form_actualizar_tdc.limite_credito"
-                                            inputId="limite"
-                                            mode="currency"
-                                            currency="MXN"
-                                            :minFractionDigits="0"
-                                            fluid
-                                            placeholder="opcional"
-                                            class="!w-2/4"
-                                        />
-                                        <small
-                                            v-if="errors.limite_credito"
-                                            class="text-red-500 text-sm"
-                                            >{{ errors.limite_credito }}
-                                        </small>
-                                    </section>
-                                </div>
-                                <div class="col-span-2 col-start-1 row-start-3 h-4/5 w-full">
-                                    <section class="flex flex-col items-center ">
-                                        <label for="fecha_corte" class="font-semibold w-28"
-                                            >Fecha de corte</label>
-                                        <DatePicker v-model="fecha_corte_act" dateFormat="dd/mm/y" />
-                                        <small
-                                            v-if="errors.limite_credito"
-                                            class="text-red-500 text-sm"
-                                            >{{ errors.limite_credito }}
-                                        </small>
-                                    </section>
-                                </div>
-                                <div class="col-span-2 col-start-3 row-start-3 h-4/5 w-full">
-                                    <section class="flex flex-col items-center ">
-                                        <label for="fecha_pago" class="font-semibold w-28"
-                                            >Fecha de pago</label>
-                                            <DatePicker v-model="fecha_pago_act" dateFormat="dd/mm/y" />
-                                        <small
-                                            v-if="errors.limite_credito"
-                                            class="text-red-500 text-sm"
-                                            >{{ errors.limite_credito }}
-                                        </small>
-                                    </section>
-                                </div>
-                                        
-                            </div>
-                            <section class="w-full flex flex-row justify-end" >
-                                <Button type="button" label="Actualizar" severity="secondary" @click="act_tarjeta"></Button>
-                            </section>
-                        </form>
+                        <tdc_form_update
+                            v-if="mostrar_panel_act_tarjeta"
+                            :form="form_actualizar_tdc"
+                            :bancos_catalogos="bancoOptions"
+                            :errors="errors"
+                            @emitir_actualizacion = "actualizar_tarjeta"
+                        />
                     </section>
                 </div>
             
@@ -505,6 +399,7 @@ function limpiar_formularios(){
                     </div>
                 </template>
             </Dialog>
+
         </template>
     </AppLayout>
 </template>

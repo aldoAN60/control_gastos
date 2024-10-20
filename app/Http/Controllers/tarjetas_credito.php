@@ -22,7 +22,7 @@ class tarjetas_credito extends Controller
         $bancos = Bancos::all()->map(function($banco) {
             return $banco->only('id', 'nombre');
         });
-        $tdc = tarjeta_credito::get_tdc();
+        $tdc = tarjeta_credito::get_tarjetas();
         return Inertia::render('TDC/index', [
             'bancos' => $bancos,
             'tdc' => $tdc,
@@ -51,9 +51,11 @@ class tarjetas_credito extends Controller
         if ($tarjeta_credito) {
             $respuesta['exito'] = true;
             $respuesta['mensaje'] = '¡Tarjeta de crédito guardada correctamente!';
+            $respuesta['severity'] = 'success';
         } else {
             $respuesta['exito'] = false;
             $respuesta['mensaje'] = 'No se pudo guardar la tarjeta de crédito, por favor intentalo más tarde';
+            $respuesta['severity'] = 'error';
         }
 
         return redirect()->route('tdc.index')->with('data', $respuesta);
@@ -71,7 +73,8 @@ class tarjetas_credito extends Controller
 
         if(!$tarjeta_credito){
             $respuesta['mensaje'] = 'No existe la tarjeta de credito.';
-            return back()->withErrors($respuesta['mensaje'])->withInput();
+            $respuesta['severity'] = 'error';
+            return back()->withErrors($respuesta)->withInput();
         }
 
         $tarjeta_credito->banco_id = $data['banco_id'];
@@ -81,11 +84,15 @@ class tarjetas_credito extends Controller
         $tarjeta_credito->fecha_pago = $data['fecha_pago'];
 
         if ($tarjeta_credito->save()) {
+            $tarjeta_actualizada = tarjeta_credito::get_tarjeta($tarjeta_credito->id);
             $respuesta['exito'] = true;
             $respuesta['mensaje'] = '¡Tarjeta de crédito Actualizada correctamente!';
+            $respuesta['severity'] = 'success';
+            $respuesta['data'] = $tarjeta_actualizada;
         } else {
             $respuesta['exito'] = false;
             $respuesta['mensaje'] = 'No se pudo actualizar la tarjeta de crédito, por favor intentalo más tarde';
+            $respuesta['severity'] = 'error';
         }
 
         return redirect()->route('tdc.index')->with('data', $respuesta);
@@ -99,9 +106,11 @@ class tarjetas_credito extends Controller
         if($tdc->delete()){
             $respuesta['exito'] = true;
             $respuesta['mensaje'] = '¡Tarjeta de crédito Eliminada correctamente!';
+            $respuesta['severity'] = 'success';
         }else{
             $respuesta['exito'] = false;
             $respuesta['mensaje'] = 'No se pudo Eliminar la tarjeta de crédito, por favor intentalo más tarde';
+            $respuesta['severity'] = 'error';
         }
         return redirect()->route('tdc.index')->with('data', $respuesta);
     }

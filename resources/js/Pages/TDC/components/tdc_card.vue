@@ -11,7 +11,6 @@ const props = defineProps({
     limite_credito: Number || null,
     fecha_corte: Number,
     fecha_pago: Number,
-    diferencia_dias: Number,
 });
 
 
@@ -130,14 +129,14 @@ const get_diferencia_fc_fp = (fc, fp) => {
 
 const fechas_fc_fp = get_diferencia_fc_fp(props.fecha_corte,props.fecha_pago);
 
-const emit = defineEmits(['tarjeta_eliminar','actualizar_tarjeta']);
+const emit = defineEmits(['tarjeta_eliminar','emitir_tdc_data']);
 
 const eliminar_tarjeta = () => {
-  emit('tarjeta_eliminar', { id: props.id, nombre: props.nombre });
+  emit('tarjeta_eliminar', { id: props.id, alias: props.alias });
 };
 
-function actualizar_tarjeta(){
-    emit('actualizar_tarjeta',{
+function emitir_tdc_data(){
+    emit('emitir_tdc_data',{
     id: props.id,
     nombre: props.nombre,
     alias: props.alias,
@@ -151,14 +150,13 @@ function actualizar_tarjeta(){
 
 </script>
 <template>
-    <section @click="actualizar_tarjeta" class="snap-start basis-4/12 shrink-0 mb-6 min-w-full">
+    <section @click="emitir_tdc_data" class="snap-start basis-4/12 shrink-0 mb-6 min-w-full">
         <Card>
             <template #title>
                 <div class="flex flex-row justify-between items-end">
                     <p>{{ alias }}</p>
                     <div class="flex flex-row gap-2">
-                        <Button icon="pi pi-pen-to-square" aria-label="Editar" size="small" />
-                            <Button @click="eliminar_tarjeta()" label="Delete" severity="danger" outlined></Button>
+                        <Button icon="pi pi-trash"  @click="eliminar_tarjeta()" aria-label="Delete" severity="danger" ></Button>
                     </div>
             </div>
             </template>
