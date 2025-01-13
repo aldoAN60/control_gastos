@@ -25,7 +25,7 @@ const secciones = ref([
     {
         label: 'Historial de gastos',
         icon: 'pi pi-history',
-        route: 'dashboard',
+        route: 'pr.index',
     }
 ]);
 

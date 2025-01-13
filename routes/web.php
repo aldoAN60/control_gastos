@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\purchase_registry;
 use App\Http\Controllers\tarjetas_credito;
 use App\Http\Controllers\Users;
 use Illuminate\Foundation\Application;
@@ -16,7 +17,7 @@ Route::get('/', function () {
 });
 
 Route::post('/registrar', [Users::class,'crear_usuario'])->name('registrar');
-/** TARJETA DE CREDITO **/
+
 
 Route::middleware([
     'auth:sanctum',
@@ -26,10 +27,13 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
-    
+    /** TARJETA DE CREDITO **/
     Route::get('/TDC/index',[tarjetas_credito::class,'index'])->name('tdc.index');
     Route::put('/TDC/actualizar/{id}', [tarjetas_credito::class, 'actualizar_tdc'])->name('tdc.actualizar');
 
     Route::post('/TDC/registrar_TDC',[tarjetas_credito::class,'registrar_TDC'])->name('tdc.registrar');
     Route::delete('TDC/eliminar/{id}',[tarjetas_credito::class,'eliminar_tdc'])->name('tdc.eliminar');
+
+    /** REGISTRO DE COMPRAS **/
+    Route::get('/registro_compras/index',[purchase_registry::class,'index'])->name('pr.index');
 });
