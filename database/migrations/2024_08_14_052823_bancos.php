@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('bancos', function (Blueprint $table) {
             $table->id();
-            $table->integer('clave')->nullable(false); // Ejemplo de un campo de tipo string
-            $table->string('nombre')->nullable(false); // Ejemplo de un campo de tipo string
-            $table->string('razon_social')->nullable(false); // Ejemplo de un campo de tipo string
+            $table->integer('clave')->nullable(false);
+            $table->string('nombre')->nullable(false);
+            $table->string('razon_social')->nullable(false);
         });
     }
 
