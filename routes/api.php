@@ -33,7 +33,7 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-    Route::post('/purchase_registry',[purchase_registry::class,'registry_purchase']);
+    Route::post('/register_purchase',[purchase_registry::class,'register_purchase']);
 });
 
 

@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::create('registro_compras', function (Blueprint $table) {
             $table->id(); // ID de la compra
             $table->foreignId('user_id')->constrained('users'); // Relación con la tabla users
-            $table->foreignId('tdc_id')->constrained('tdc'); // Relación con la tabla tdc
+            $table->foreignId('tdc_id')->nullable()->constrained('tdc'); // Relación con la tabla tdc
             $table->string('concepto', 24); // Concepto de la compra
             $table->decimal('monto', 10, 2); // Monto de la compra
             $table->foreignId('categoria_id')->constrained('categorias'); // Relación con la tabla categorias
