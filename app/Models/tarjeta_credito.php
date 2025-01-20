@@ -19,6 +19,14 @@ class tarjeta_credito extends Model
         'diferencia_dias',
     ];
     use HasFactory;
+
+    public function purchase_registry(){
+        return $this->hasMany(purchase_registry::class, 'tdc_id');
+    }
+    public function banco(){
+        return $this->belongsTo(bancos::class, 'banco_id');
+    }
+
     public static function get_tarjetas(){
         $q_tdcs = tarjeta_credito::select('tdc.id', 'b.nombre', 'tdc.alias', 'tdc.limite_credito', 'tdc.fecha_corte','tdc.fecha_pago')
                 ->join('bancos as b', 'b.id', '=', 'tdc.banco_id')

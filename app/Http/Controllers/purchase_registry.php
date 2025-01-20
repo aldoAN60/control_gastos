@@ -17,6 +17,16 @@ class purchase_registry extends Controller
         
         return inertia::render('purchase_registry/index');
     }
+    public function test_belogs(){
+        $registries = PR::PurchaseRegistry()->get();
+        $pr = PR::format_registries($registries);
+        
+
+        return response()->json([
+            'format_data' => $pr,
+            // 'original_data' => $registries,
+        ]);
+    }
 
     public function register_purchase(Request $request){
         $data = $request->all();
@@ -52,7 +62,6 @@ class purchase_registry extends Controller
                 'success' => true,
                 'message' => 'Operación exitosa',
                 'response' => [
-                    'data' => $data,
                     'registry' => $registry,
                 ],
                 'source' => $source,

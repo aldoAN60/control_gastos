@@ -18,11 +18,13 @@ class tarjetas_credito extends Controller
     public function __construct(Validaciones $validaciones){
         $this->validaciones = $validaciones;
     }
+
     public function index(){
         $bancos = Bancos::all()->map(function($banco) {
             return $banco->only('id', 'nombre');
         });
         $tdc = tarjeta_credito::get_tarjetas();
+
         return Inertia::render('TDC/index', [
             'bancos' => $bancos,
             'tdc' => $tdc,

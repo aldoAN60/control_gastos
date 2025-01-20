@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('concepto', 24); // Concepto de la compra frecuente
             $table->decimal('monto', 10, 2); // Monto de la compra
             $table->foreignId('user_id')->constrained('users'); // Relación con la tabla users
+            $table->enum('tipo_gasto', ['necesario', 'secundario', 'precindible']); // Tipo de gasto
             $table->foreignId('categoria_id')->constrained('categorias'); // Relación con la tabla categorias
             $table->foreignId('sub_categoria_id')->constrained('categorias'); // Relación con la tabla categorias (subcategorías)
-            $table->enum('tipo_gasto', ['necesario', 'secundario', 'precindible']); // Tipo de gasto
             $table->foreignId('frecuencia_pago_id')->constrained('frecuencias_pago'); // Relación con frecuencias de pago
             $table->boolean('eliminado')->default(false); // Baja lógica
             $table->date('registro_compras_insercion')->nullable(); // Fecha de la próxima inserción

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->decimal('monto', 10, 2); // Monto del crédito
             $table->foreignId('user_id')->constrained('users'); // Relación con la tabla users
             $table->foreignId('tdc_id')->nullable()->constrained('tdc'); // Relación con la tabla tdc
+            $table->foreignId('categoria_id')->constrained('categorias'); // Relación con la tabla categorias
+            $table->foreignId('sub_categoria_id')->constrained('categorias'); // Relación con la tabla categorias (subcategorías)
             $table->foreignId('frecuencia_pago_id')->constrained('frecuencias_pago'); // Relación con la tabla frecuencias_pago
             $table->integer('cantidad_pagos'); // Cantidad total de pagos
             $table->integer('pagos_restantes'); // Pagos restantes
@@ -30,6 +32,8 @@ return new class extends Migration
             $table->index('frecuencia_pago_id');
             $table->index('pagado');
             $table->index('eliminado');
+            $table->index('categoria_id');
+            $table->index('sub_categoria_id');
         });
     }
 

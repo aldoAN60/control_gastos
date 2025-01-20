@@ -34,6 +34,7 @@ Route::middleware([
 ])->group(function () {
 
     Route::post('/register_purchase',[purchase_registry::class,'register_purchase']);
+    Route::get('/test',[purchase_registry::class,'test_belogs']);
 });
 
 

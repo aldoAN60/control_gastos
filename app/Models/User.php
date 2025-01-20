@@ -83,4 +83,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function purchase_registry(){
+        return $this->hasMany(purchase_registry::class, 'user_id');
+    }
 }

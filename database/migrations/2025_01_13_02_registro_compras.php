@@ -23,7 +23,7 @@ return new class extends Migration
             $table->foreignId('categoria_id')->constrained('categorias'); // Relación con la tabla categorias
             $table->foreignId('sub_categoria_id')->constrained('categorias'); // Relación con la tabla categorias (subcategoría)
             $table->enum('tipo_gasto', ['necesario', 'secundario', 'precindible']); // Tipo de gasto
-            $table->foreignId('metodo_pago_id')->constrained('metodo_pago'); // Relación con la tabla metodo_pago
+            $table->foreignId('metodo_pago_id')->nullable()->constrained('metodo_pago'); // Relación con la tabla metodo_pago
             $table->foreignId('registro_compras_frecuentes_id')->nullable()->constrained('registro_compras_frecuentes');
             $table->foreignId('registro_compras_credito_id')->nullable()->constrained('registro_compras_credito');
             $table->boolean('eliminado')->default(false); // Baja lógica
