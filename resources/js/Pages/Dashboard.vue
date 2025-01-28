@@ -6,7 +6,6 @@ import Welcome from '@/Components/Welcome.vue';
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-                Registro de gastos
         </template>
 
         <div class="py-12">

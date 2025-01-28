@@ -15,7 +15,6 @@ import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
 import { router } from "@inertiajs/vue3";
 import messageStore from "@/stores/messageStore";
-import amex_card from "../../../../public/img/amex_card.png"
 
 // variables reactivas
 const mensaje_registro = ref("");

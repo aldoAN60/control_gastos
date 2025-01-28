@@ -12,20 +12,15 @@ class purchase_registry extends Controller
     public function __construct(Validaciones $validaciones){
         $this->validaciones = $validaciones;
     }
-    public function index(){
-        
-        
-        return inertia::render('purchase_registry/index');
-    }
-    public function test_belogs(){
+    public function index()
+    {
         $registries = PR::PurchaseRegistry()->get();
         $pr = PR::format_registries($registries);
-        
 
-        return response()->json([
-            'format_data' => $pr,
-            // 'original_data' => $registries,
-        ]);
+        $props = [
+            'purchase_registries' => $pr, // Asegúrate que el nombre es 'purchase_registries'
+        ];
+        return inertia::render('purchase_registry/index', $props);
     }
 
     public function register_purchase(Request $request){

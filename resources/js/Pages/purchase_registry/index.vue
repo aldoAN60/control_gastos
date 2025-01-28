@@ -1,22 +1,37 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import purchase_table from "./components/purchase_table.vue";
+import { ref } from "vue";
 
 
-const title = "hola desde promp";
+
+// variables reactivas
+const mensaje_registro = ref("");
+const mensaje_registro_visible = ref(false);
+const severity = ref("");
+
+const props = defineProps({
+  purchase_registries: {
+    type: Array,
+    required: true,
+  },
+});
+
 </script>
 
 <template>
     <AppLayout
-        title="registro de compras"
+        title="registro gastos"
         :mensaje_visible="mensaje_registro_visible"
         :mensaje="mensaje_registro"
         :severity="severity"
         >
-        <template #header> Tarjetas de credito </template>
-        <template #main_content >
-            <h1>hola desde registro de compras</h1>
-            <purchase_table :title = "title" ></purchase_table>
+        <template #header> Registro Gastos </template>
+        <template #main_content>
+            <purchase_table 
+            :registries = "props.purchase_registries"
+            
+            ></purchase_table>
         </template>
     </AppLayout>
 </template>
