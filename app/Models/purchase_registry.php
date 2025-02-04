@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class purchase_registry extends Model
 {
-    protected $table = "registro_compras";
+    protected $table = "purchase_registry";
 
     protected $fillable = [
         'user_id',

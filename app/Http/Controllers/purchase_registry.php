@@ -10,6 +10,11 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\purchase_registry as PR;
 use App\Services\Validaciones;
+use App\Models\payment_frequency;
+use App\Models\payment_method;
+use App\Models\purchase_registry_credit;
+use App\Models\purchase_registry_frequent;
+use App\Models\tarjeta_credito;
 
 
 class purchase_registry extends Core
@@ -23,10 +28,15 @@ class purchase_registry extends Core
         $registries = PR::PurchaseRegistry()->get();
         $pr = PR::format_registries($registries);
         $categories = category::get_categories();
+        $payment_frequency = payment_frequency::select('id','frequency','days')->orderBy('days')->get();
+        $payment_method = payment_method::all();
+        
         $props = [
             'purchase_registries' => $pr, // Asegúrate que el nombre es 'purchase_registries'
             'categories' => $categories,
-        ];
+            'payment_frequency' => $payment_frequency,
+            'payment_method' => $payment_method,
+        ]; 
         return response()->json($props);
         return inertia::render('purchase_registry/index', $props);
     }
