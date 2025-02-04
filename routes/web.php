@@ -36,4 +36,5 @@ Route::middleware([
 
     /** REGISTRO DE COMPRAS **/
     Route::get('/registro_compras/index',[purchase_registry::class,'index'])->name('pr.index');
+    Route::put('/registro_compras/update',[purchase_registry::class,'update_registry'])->name('pr.update');
 });

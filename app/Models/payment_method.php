@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class payment_method extends Model
 {
     use HasFactory;
-    protected $table = 'metodo_pago';
+    protected $table = 'payment_method';
 
     public function purchase_registry(){
-        return $this->hasMany(purchase_registry::class, 'metodo_pago_id');
+        return $this->hasMany(purchase_registry::class, 'payment_method_id');
     }
 }

@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Http\Controllers\Core;
+
+use App\Models\category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\purchase_registry as PR;
 use App\Services\Validaciones;
-class purchase_registry extends Controller
+
+
+class purchase_registry extends Core
 {
     protected $validaciones;
     public function __construct(Validaciones $validaciones){
@@ -16,17 +22,19 @@ class purchase_registry extends Controller
     {
         $registries = PR::PurchaseRegistry()->get();
         $pr = PR::format_registries($registries);
-
+        $categories = category::get_categories();
         $props = [
             'purchase_registries' => $pr, // Asegúrate que el nombre es 'purchase_registries'
+            'categories' => $categories,
         ];
+        return response()->json($props);
         return inertia::render('purchase_registry/index', $props);
     }
 
     public function register_purchase(Request $request){
         $data = $request->all();
         
-        if ($request->is('api/*')) {
+        if($request->is('api/*')) {
             $source = 'API';
         } else {
             $source = 'WEB';
@@ -68,5 +76,34 @@ class purchase_registry extends Controller
                 'source' => $source,
             ]);
         }
+    }
+
+    public function update_registry(Request $request)
+    {
+
+        $source = $request->is('api/*') ? 'API' : 'WEB';
+        $data = PR::format_registries_put($request->all());
+        // Validación
+        $validation_result = $this->validaciones->purchase_registry_validation($data);
+        if (!$validation_result['success']) {
+            return $this->responseValidationError($validation_result['message'], $source);
+        }
+    
+        // Actualización del registro
+        try {
+            $registry = PR::findOrFail($data['id']);
+            $registry->update($data);
+
+            
+            // Guardar y manejar la respuesta
+            $response = $registry->save() 
+                ? ['success' => true, 'message' => '¡Registro actualizado correctamente!', 'severity' => 'success'] 
+                : ['success' => false, 'message' => 'No se pudo actualizar el registro, por favor inténtelo más tarde', 'severity' => 'error'];
+    
+        } catch (\Exception $e) {
+            $response = ['success' => false, 'message' => 'Error inesperado al actualizar el registro', 'severity' => 'error'];
+        }
+        $route = 'pr.index';
+        return $this->response( $response, $source, $route);
     }
 }

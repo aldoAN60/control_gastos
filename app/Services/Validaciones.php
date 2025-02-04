@@ -43,15 +43,15 @@ class Validaciones
         $rules = [
             'user_id' => 'required|integer|exists:users,id',
             'tdc_id' => 'nullable|integer|exists:tdc,id',
-            'concepto' => 'required|string|max:24|min:4|regex:/^[a-zA-Z0-9\s]+$/',
-            'monto' => 'required|numeric|min:1',
-            'categoria_id' => 'required|integer|exists:categorias,id',
-            'sub_categoria_id' => 'required|integer|exists:categorias,id',
-            'tipo_gasto' => 'required|string|in:necesario,secundario,precindible',
-            'metodo_pago_id' => 'required|integer|exists:metodo_pago,id',
-            'registro_compras_frecuentes_id' => 'nullable|integer,exists:registro_compras_frecuentes,id',
-            'registro_compras_credito_id' => 'nullable|integer,exists:registro_compras_credito,id',
-            'eliminado' => 'nullable|boolean',
+            'concept' => 'required|string|max:24|min:4|regex:/^[a-zA-Z0-9\s]+$/',
+            'amount' => 'required|numeric|min:1',
+            'category_id' => 'required|integer|exists:categorias,id',
+            'sub_category_id' => 'required|integer|exists:categorias,id',
+            'spend_type' => 'required|string|in:necesario,secundario,precindible',
+            'payment_method_id' => 'required|integer|exists:metodo_pago,id',
+            'purchase_registry_frequent_id' => 'nullable|integer,exists:registro_compras_frecuentes,id',
+            'purchase_registry_credit_id' => 'nullable|integer,exists:registro_compras_credito,id',
+            'delete' => 'nullable|boolean',
         ];
 
         $messages = [
@@ -62,40 +62,40 @@ class Validaciones
             'tdc_id.integer' => 'El ID de la tarjeta debe ser un número.',
             'tdc_id.exists' => 'La tarjeta seleccionada no existe en la base de datos.',
         
-            'concepto.required' => 'El concepto es obligatorio.',
-            'concepto.string' => 'El concepto debe ser una cadena de texto.',
-            'concepto.max' => 'El concepto no puede tener más de 24 caracteres.',
-            'concepto.min' => 'El concepto debe tener al menos 4 caracteres.',
-            'concepto.regex' => 'El concepto solo puede contener letras, números y espacios.',
+            'concept.required' => 'El concepto es obligatorio.',
+            'concept.string' => 'El concepto debe ser una cadena de texto.',
+            'concept.max' => 'El concepto no puede tener más de 24 caracteres.',
+            'concept.min' => 'El concepto debe tener al menos 4 caracteres.',
+            'concept.regex' => 'El concepto solo puede contener letras, números y espacios.',
         
-            'monto.required' => 'El monto es obligatorio.',
-            'monto.numeric' => 'El monto debe ser un número válido.',
-            'monto.min' => 'El monto debe ser mayor o igual a 1.',
+            'amount.required' => 'El monto es obligatorio.',
+            'amount.numeric' => 'El monto debe ser un número válido.',
+            'amount.min' => 'El monto debe ser mayor o igual a 1.',
         
-            'categoria_id.required' => 'La categoría es obligatoria.',
-            'categoria_id.integer' => 'El ID de la categoría debe ser un número.',
-            'categoria_id.exists' => 'La categoría seleccionada no existe en la base de datos.',
+            'category_id.required' => 'La categoría es obligatoria.',
+            'category_id.integer' => 'El ID de la categoría debe ser un número.',
+            'category_id.exists' => 'La categoría seleccionada no existe en la base de datos.',
         
-            'sub_categoria_id.integer' => 'El ID de la subcategoría debe ser un número.',
-            'sub_categoria_id.exists' => 'La subcategoría seleccionada no existe en la base de datos.',
+            'sub_category_id.integer' => 'El ID de la subcategoría debe ser un número.',
+            'sub_category_id.exists' => 'La subcategoría seleccionada no existe en la base de datos.',
         
-            'tipo_gasto.required' => 'El tipo de gasto es obligatorio.',
-            'tipo_gasto.string' => 'El tipo de gasto debe ser una cadena de texto.',
-            'tipo_gasto.in' => 'El tipo de gasto debe ser necesario, secundario o prescindible.',
+            'spend_type.required' => 'El tipo de gasto es obligatorio.',
+            'spend_type.string' => 'El tipo de gasto debe ser una cadena de texto.',
+            'spend_type.in' => 'El tipo de gasto debe ser necesario, secundario o prescindible.',
         
-            'metodo_pago_id.required' => 'El método de pago es obligatorio.',
-            'metodo_pago_id.integer' => 'El ID del método de pago debe ser un número.',
-            'metodo_pago_id.exists' => 'El método de pago seleccionado no existe en la base de datos.',
+            'payment_method_id.required' => 'El método de pago es obligatorio.',
+            'payment_method_id.integer' => 'El ID del método de pago debe ser un número.',
+            'payment_method_id.exists' => 'El método de pago seleccionado no existe en la base de datos.',
         
-            'registro_compras_frecuentes_id.integer' => 'El ID del registro frecuente debe ser un número.',
-            'registro_compras_frecuentes_id.exists' => 'El registro frecuente seleccionado no existe en la base de datos.',
+            'purchase_registry_frequent_id.integer' => 'El ID del registro frecuente debe ser un número.',
+            'purchase_registry_frequent_id.exists' => 'El registro frecuente seleccionado no existe en la base de datos.',
             // 'registro_compras_frecuentes_id.required_without' => 'Debe seleccionar un registro frecuente si no seleccionó un registro de crédito.',
         
-            'registro_compras_credito_id.integer' => 'El ID del registro de crédito debe ser un número.',
-            'registro_compras_credito_id.exists' => 'El registro de crédito seleccionado no existe en la base de datos.',
+            'purchase_registry_credit_id.integer' => 'El ID del registro de crédito debe ser un número.',
+            'purchase_registry_credit_id.exists' => 'El registro de crédito seleccionado no existe en la base de datos.',
             // 'registro_compras_credito_id.required_without' => 'Debe seleccionar un registro de crédito si no seleccionó un registro frecuente.',
         
-            'eliminado.boolean' => 'El valor de eliminado debe ser verdadero o falso.',
+            'delete.boolean' => 'El valor de eliminado debe ser verdadero o falso.',
         ];
         
         $validator = Validator::make($data, $rules, $messages);

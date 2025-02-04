@@ -11,26 +11,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('registro_compras_frecuentes', function (Blueprint $table) {
+        Schema::create('purchase_registry_frequent', function (Blueprint $table) {
             $table->id(); // ID único
-            $table->string('concepto', 24); // Concepto de la compra frecuente
-            $table->decimal('monto', 10, 2); // Monto de la compra
+            $table->string('concept', 24); // Concepto de la compra frecuente
+            $table->decimal('amount', 10, 2); // Monto de la compra
             $table->foreignId('user_id')->constrained('users'); // Relación con la tabla users
-            $table->enum('tipo_gasto', ['necesario', 'secundario', 'precindible']); // Tipo de gasto
-            $table->foreignId('categoria_id')->constrained('categorias'); // Relación con la tabla categorias
-            $table->foreignId('sub_categoria_id')->constrained('categorias'); // Relación con la tabla categorias (subcategorías)
-            $table->foreignId('frecuencia_pago_id')->constrained('frecuencias_pago'); // Relación con frecuencias de pago
-            $table->boolean('eliminado')->default(false); // Baja lógica
-            $table->date('registro_compras_insercion')->nullable(); // Fecha de la próxima inserción
+            $table->enum('expense_type', ['necesario', 'secundario', 'precindible']); // Tipo de gasto
+            $table->foreignId('category_id')->constrained('categories'); // Relación con la tabla categorias
+            $table->foreignId('sub_category_id')->constrained('categories'); // Relación con la tabla categorias (subcategorías)
+            $table->foreignId('payment_frequency_id')->constrained('payment_frequency'); // Relación con frecuencias de pago
+            $table->boolean('delete')->default(false); // Baja lógica
+            $table->date('next_insert_date')->nullable(); // Fecha de la próxima inserción
             $table->timestamps(); // Fechas de creación y actualización
 
             // Índices adicionales
             $table->index('user_id');
-            $table->index('categoria_id');
-            $table->index('sub_categoria_id');
-            $table->index('tipo_gasto');
-            $table->index('frecuencia_pago_id');
-            $table->index('eliminado');
+            $table->index('category_id');
+            $table->index('sub_category_id');
+            $table->index('expense_type');
+            $table->index('payment_frequency_id');
+            $table->index('delete');
         });
     }
 
@@ -39,6 +39,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('registro_compras_frecuentes');
+        Schema::dropIfExists('purchase_registry_frequent');
     }
 };

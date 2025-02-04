@@ -11,29 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('registro_compras_credito', function (Blueprint $table) {
+        Schema::create('purchase_registry_credit', function (Blueprint $table) {
             $table->id(); // ID único
-            $table->string('concepto', 24); // Concepto de la compra
-            $table->decimal('monto', 10, 2); // Monto del crédito
+            $table->string('concept', 24); // Concepto de la compra
+            $table->decimal('amount', 10, 2); // Monto del crédito
             $table->foreignId('user_id')->constrained('users'); // Relación con la tabla users
+            $table->enum('expense_type', ['necesario', 'secundario', 'precindible']); // Tipo de gasto
             $table->foreignId('tdc_id')->nullable()->constrained('tdc'); // Relación con la tabla tdc
-            $table->foreignId('categoria_id')->constrained('categorias'); // Relación con la tabla categorias
-            $table->foreignId('sub_categoria_id')->constrained('categorias'); // Relación con la tabla categorias (subcategorías)
-            $table->foreignId('frecuencia_pago_id')->constrained('frecuencias_pago'); // Relación con la tabla frecuencias_pago
-            $table->integer('cantidad_pagos'); // Cantidad total de pagos
-            $table->integer('pagos_restantes'); // Pagos restantes
-            $table->boolean('pagado')->default(false); // Indica si el crédito está liquidado
-            $table->boolean('eliminado')->default(false); // Baja lógica
+            $table->foreignId('category_id')->constrained('categories'); // Relación con la tabla categorias
+            $table->foreignId('sub_category_id')->constrained('categories'); // Relación con la tabla categorias (subcategorías)
+            $table->foreignId('payment_frequency_id')->constrained('payment_frequency'); // Relación con la tabla frecuencias_pago
+            $table->integer('qty_payment'); // Cantidad total de pagos
+            $table->integer('remain_payment'); // Pagos restantes
+            $table->boolean('paid')->default(false); // Indica si el crédito está liquidado
+            $table->boolean('delete')->default(false); // Baja lógica
             $table->timestamps(); // Fechas de creación y actualización
 
             // Índices adicionales
             $table->index('user_id');
             $table->index('tdc_id');
-            $table->index('frecuencia_pago_id');
-            $table->index('pagado');
-            $table->index('eliminado');
-            $table->index('categoria_id');
-            $table->index('sub_categoria_id');
+            $table->index('payment_frequency_id');
+            $table->index('paid');
+            $table->index('datele');
+            $table->index('category_id');
+            $table->index('sub_category_id');
         });
     }
 
@@ -42,6 +43,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('registro_compras_credito');
+        Schema::dropIfExists('purchase_registry_credit');
     }
 };

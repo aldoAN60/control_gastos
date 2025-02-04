@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categorias', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id(); // ID de la categoría
-            $table->string('nombre', 34); // Nombre de la categoría
-            $table->foreignId('padre_id')->nullable()->constrained('categorias')->onDelete('cascade'); // Relación con la misma tabla (subcategorías)
-            $table->tinyInteger('activo')->default(1); // Indicador de si la categoría está activa (1 = activa, 0 = inactiva)
+            $table->string('name', 34); // Nombre de la categoría
+            $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('cascade'); // Relación con la misma tabla (subcategorías)
+            $table->tinyInteger('active')->default(1); // Indicador de si la categoría está activa (1 = activa, 0 = inactiva)
             $table->timestamps(); // Timestamps para creación y actualización
         
             // Índices
-            $table->index('padre_id');
+            $table->index('parent_id');
         });
         
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categorias');
+        Schema::dropIfExists('categories');
     }
 };

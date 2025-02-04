@@ -15,61 +15,61 @@ class CategoriaSeeder extends Seeder
     {
          // Categorías principales
          $categorias = [
-            ['nombre' => 'Hogar', 'padre_id' => null, 'activo' => 1],
-            ['nombre' => 'Transporte', 'padre_id' => null, 'activo' => 1],
-            ['nombre' => 'Alimentación', 'padre_id' => null, 'activo' => 1],
-            ['nombre' => 'Entretenimiento', 'padre_id' => null, 'activo' => 1],
-            ['nombre' => 'Salud', 'padre_id' => null, 'activo' => 1],
-            ['nombre' => 'Educación', 'padre_id' => null, 'activo' => 1],
-            ['nombre' => 'Ahorro e inversión', 'padre_id' => null, 'activo' => 1],
+            ['name' => 'Hogar', 'parent_id' => null, 'active' => 1],
+            ['name' => 'Transporte', 'parent_id' => null, 'active' => 1],
+            ['name' => 'Alimentación', 'parent_id' => null, 'active' => 1],
+            ['name' => 'Entretenimiento', 'parent_id' => null, 'active' => 1],
+            ['name' => 'Salud', 'parent_id' => null, 'active' => 1],
+            ['name' => 'Educación', 'parent_id' => null, 'active' => 1],
+            ['name' => 'Ahorro e inversión', 'parent_id' => null, 'active' => 1],
         ];
 
         // Insertar categorías principales
         foreach ($categorias as $categoria) {
-            DB::table('categorias')->insert($categoria);
+            DB::table('categories')->insert($categoria);
         }
 
         // Subcategorías de cada categoría
         // Para cada categoría principal, agregamos subcategorías
-        DB::table('categorias')->insert([
+        DB::table('categories')->insert([
             // Subcategorías para 'Hogar'
-            ['nombre' => 'Alquiler', 'padre_id' => 1, 'activo' => 1],
-            ['nombre' => 'Servicios Públicos', 'padre_id' => 1, 'activo' => 1],
-            ['nombre' => 'Agua', 'padre_id' => 1, 'activo' => 1],
-            ['nombre' => 'Electricidad', 'padre_id' => 1, 'activo' => 1],
-            ['nombre' => 'Gas', 'padre_id' => 1, 'activo' => 1],
-            ['nombre' => 'Internet', 'padre_id' => 1, 'activo' => 1],
-            ['nombre' => 'Telefonia', 'padre_id' => 1, 'activo' => 1],
+            ['name' => 'Alquiler', 'parent_id' => 1, 'active' => 1],
+            ['name' => 'Servicios Públicos', 'parent_id' => 1, 'active' => 1],
+            ['name' => 'Agua', 'parent_id' => 1, 'active' => 1],
+            ['name' => 'Electricidad', 'parent_id' => 1, 'active' => 1],
+            ['name' => 'Gas', 'parent_id' => 1, 'active' => 1],
+            ['name' => 'Internet', 'parent_id' => 1, 'active' => 1],
+            ['name' => 'Telefonia', 'parent_id' => 1, 'active' => 1],
 
             // Subcategorías para 'Transporte'
-            ['nombre' => 'Gasolina', 'padre_id' => 2, 'activo' => 1],
-            ['nombre' => 'Transporte Público', 'padre_id' => 2, 'activo' => 1],
-            ['nombre' => 'Mantenimiento', 'padre_id' => 2, 'activo' => 1],
+            ['name' => 'Gasolina', 'parent_id' => 2, 'active' => 1],
+            ['name' => 'Transporte Público', 'parent_id' => 2, 'active' => 1],
+            ['name' => 'Mantenimiento', 'parent_id' => 2, 'active' => 1],
 
             // Subcategorías para 'Alimentación'
-            ['nombre' => 'Despensa', 'padre_id' => 3, 'activo' => 1],
-            ['nombre' => 'Restaurantes', 'padre_id' => 3, 'activo' => 1],
-            ['nombre' => 'Comida rápida', 'padre_id' => 3, 'activo' => 1],
+            ['name' => 'Despensa', 'parent_id' => 3, 'active' => 1],
+            ['name' => 'Restaurantes', 'parent_id' => 3, 'active' => 1],
+            ['name' => 'Comida rápida', 'parent_id' => 3, 'active' => 1],
 
             // Subcategorías para 'Entretenimiento'
-            ['nombre' => 'Cine', 'padre_id' => 4, 'activo' => 1],
-            ['nombre' => 'Conciertos', 'padre_id' => 4, 'activo' => 1],
-            ['nombre' => 'Suscripciones', 'padre_id' => 4, 'activo' => 1],
+            ['name' => 'Cine', 'parent_id' => 4, 'active' => 1],
+            ['name' => 'Conciertos', 'parent_id' => 4, 'active' => 1],
+            ['name' => 'Suscripciones', 'parent_id' => 4, 'active' => 1],
 
             // Subcategorías para 'Salud'
-            ['nombre' => 'Medicinas', 'padre_id' => 5, 'activo' => 1],
-            ['nombre' => 'Consultas Médicas', 'padre_id' => 5, 'activo' => 1],
-            ['nombre' => 'Seguros', 'padre_id' => 5, 'activo' => 1],
+            ['name' => 'Medicinas', 'parent_id' => 5, 'active' => 1],
+            ['name' => 'Consultas Médicas', 'parent_id' => 5, 'active' => 1],
+            ['name' => 'Seguros', 'parent_id' => 5, 'active' => 1],
 
             // Subcategorías para 'Educación'
-            ['nombre' => 'Cursos', 'padre_id' => 6, 'activo' => 1],
-            ['nombre' => 'Libros', 'padre_id' => 6, 'activo' => 1],
-            ['nombre' => 'Colegiaturas', 'padre_id' => 6, 'activo' => 1],
+            ['name' => 'Cursos', 'parent_id' => 6, 'active' => 1],
+            ['name' => 'Libros', 'parent_id' => 6, 'active' => 1],
+            ['name' => 'Colegiaturas', 'parent_id' => 6, 'active' => 1],
 
             // Subcategorías para 'Ahorro e inversión'
-            ['nombre' => 'Ahorro Fijo', 'padre_id' => 7, 'activo' => 1],
-            ['nombre' => 'Inversiones', 'padre_id' => 7, 'activo' => 1],
-            ['nombre' => 'Fondos de Emergencia', 'padre_id' => 7, 'activo' => 1],
+            ['name' => 'Ahorro Fijo', 'parent_id' => 7, 'active' => 1],
+            ['name' => 'Inversiones', 'parent_id' => 7, 'active' => 1],
+            ['name' => 'Fondos de Emergencia', 'parent_id' => 7, 'active' => 1],
         ]);
     }
 }

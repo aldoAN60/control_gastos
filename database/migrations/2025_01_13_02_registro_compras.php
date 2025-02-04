@@ -18,26 +18,26 @@ return new class extends Migration
             $table->id(); // ID de la compra
             $table->foreignId('user_id')->constrained('users'); // Relación con la tabla users
             $table->foreignId('tdc_id')->nullable()->constrained('tdc'); // Relación con la tabla tdc
-            $table->string('concepto', 24); // Concepto de la compra
-            $table->decimal('monto', 10, 2); // Monto de la compra
-            $table->foreignId('categoria_id')->constrained('categorias'); // Relación con la tabla categorias
-            $table->foreignId('sub_categoria_id')->constrained('categorias'); // Relación con la tabla categorias (subcategoría)
-            $table->enum('tipo_gasto', ['necesario', 'secundario', 'precindible']); // Tipo de gasto
-            $table->foreignId('metodo_pago_id')->nullable()->constrained('metodo_pago'); // Relación con la tabla metodo_pago
-            $table->foreignId('registro_compras_frecuentes_id')->nullable()->constrained('registro_compras_frecuentes');
-            $table->foreignId('registro_compras_credito_id')->nullable()->constrained('registro_compras_credito');
-            $table->boolean('eliminado')->default(false); // Baja lógica
+            $table->string('concept', 24); // Concepto de la compra
+            $table->decimal('amount', 10, 2); // Monto de la compra
+            $table->foreignId('category_id')->constrained('categorias'); // Relación con la tabla categorias
+            $table->foreignId('sub_category_id')->constrained('categorias'); // Relación con la tabla categorias (subcategoría)
+            $table->enum('spend_type', ['necesario', 'secundario', 'precindible']); // Tipo de gasto
+            $table->foreignId('payment_method_id')->nullable()->constrained('metodo_pago'); // Relación con la tabla metodo_pago
+            $table->foreignId('purchase_registry_frequent_id')->nullable()->constrained('registro_compras_frecuentes');
+            $table->foreignId('purchase_registry_credit_id')->nullable()->constrained('registro_compras_credito');
+            $table->boolean('delete')->default(false); // Baja lógica
             $table->timestamps(); // Timestamps para creación y actualización
         
             // Índices
             $table->index('user_id');
             $table->index('tdc_id');
-            $table->index('categoria_id');
-            $table->index('sub_categoria_id');
-            $table->index('tipo_gasto');
-            $table->index('metodo_pago_id');
-            $table->index('registro_compras_frecuentes_id');
-            $table->index('registro_compras_credito_id');
+            $table->index('category_id');
+            $table->index('sub_category_id');
+            $table->index('spend_type');
+            $table->index('payment_method_id');
+            $table->index('purchase_registry_frequent_id');
+            $table->index('purchase_registry_credit_id');
         });
         
     }

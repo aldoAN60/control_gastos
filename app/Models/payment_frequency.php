@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class payment_frequency extends Model
 {
-    protected $table = "frecuencias_pago";
+    protected $table = "payment_frequency";
 
 
 }

@@ -32,9 +32,11 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-
-    Route::post('/register_purchase',[purchase_registry::class,'register_purchase']);
+    // Route::get('/register_purchase/index',[purchase_registry::class,'index']);
+    Route::get('/registro_compras/index',[purchase_registry::class,'index'])->name('pr.index');
+    Route::post('/register_purchase/post',[purchase_registry::class,'register_purchase']);
     Route::get('/test',[purchase_registry::class,'test_belogs']);
+    Route::put('/registro_compras/update',[purchase_registry::class,'update_registry'])->name('pr.update');
 });
 
 

@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('metodo_pago', function (Blueprint $table) {
+        Schema::create('payment_method', function (Blueprint $table) {
             $table->id();
-            $table->string('metodo')->unique()->nullable(false); // Ejemplo de un campo de tipo string
+            $table->string('method')->unique()->nullable(false); // Ejemplo de un campo de tipo string
         });
     }
 
@@ -22,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('metodo_pago');
+        Schema::dropIfExists('payment_method');
     }
 };
