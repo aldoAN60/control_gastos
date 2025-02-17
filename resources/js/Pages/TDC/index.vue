@@ -25,20 +25,20 @@ const mostrar_panel_act_tarjeta = ref(false);
 
 // Obtén los datos de la página
 const { props } = usePage();
-const bancos = ref(props.bancos);
+const banks = ref(props.banks);
 const tdc = ref(props.tdc);
+console.log(tdc);
 // Banco seleccionado por el usuario
 const selected_banco = ref(null);
 
 const fechas_pc = ref(null);
-// Opciones para el Select basadas en los datos de bancos
+// Opciones para el Select basadas en los datos de banks
 const bancoOptions = ref(
-    bancos.value.map((banco) => ({
+    banks.value.map((banco) => ({
         value: banco.id,
-        label: banco.nombre,
+        label: banco.name,
     }))
 );
-
 const convert_string_to_date = (date_str) => {
     const fecha = new Date(date_str);
 
@@ -51,20 +51,20 @@ const convert_string_to_date = (date_str) => {
 };
 
 const diferencia_fc_fp = (fechas_pc) => {
-    const fecha_corte = convert_string_to_date(fechas_pc.value[0]);
-    const fecha_pago = convert_string_to_date(fechas_pc.value[1]);
+    const statement_date = convert_string_to_date(fechas_pc.value[0]);
+    const payment_date = convert_string_to_date(fechas_pc.value[1]);
 
-    const diferenciaMilisegundos = fecha_pago - fecha_corte;
+    const diferenciaMilisegundos = payment_date - statement_date;
     const diferenciaDias = Math.ceil(
         diferenciaMilisegundos / (1000 * 60 * 60 * 24)
     );
 
-    const fc = fecha_corte.getDate();
-    const fp = fecha_pago.getDate();
+    const fc = statement_date.getDate();
+    const fp = payment_date.getDate();
 
     const fechas = {
-        fecha_corte: fc,
-        fecha_pago: fp,
+        statement_date: fc,
+        payment_date: fp,
         diferencia_dias: diferenciaDias,
     };
 
@@ -72,32 +72,32 @@ const diferencia_fc_fp = (fechas_pc) => {
 };
 
 const form = useForm({
-    banco_id: null,
+    bank_id: null,
     alias: null,
-    limite_credito: null,
-    fecha_corte: null,
-    fecha_pago: null,
+    credit_limit: null,
+    statement_date: null,
+    payment_date: null,
     diferencia_dias: null,
 });
 
 const form_actualizar_tdc = useForm({
     id: null,
-    banco_id: null,
+    bank_id: null,
     alias: null,
-    limite_credito: null,
-    fecha_corte: null,
-    fecha_pago: null,
+    credit_limit: null,
+    statement_date: null,
+    payment_date: null,
 });
-const fecha_corte_act = ref(null);
-const fecha_pago_act = ref(null);
+const statement_date_act = ref(null);
+const payment_date_act = ref(null);
 
 const errors = ref({}); // Define `errors` como un objeto reactivo
 const submit = () => {
     const fechas = diferencia_fc_fp(fechas_pc);
 
-    form.banco_id = selected_banco.value;
-    form.fecha_corte = fechas["fecha_corte"];
-    form.fecha_pago = fechas["fecha_pago"];
+    form.bank_id = selected_banco.value;
+    form.statement_date = fechas["statement_date"];
+    form.payment_date = fechas["payment_date"];
     form.diferencia_dias = fechas["diferencia_dias"];
 
     form.post(route("tdc.registrar"), {
@@ -129,7 +129,6 @@ const submit = () => {
 
 const confirm = useConfirm();
 const confirmarEliminar = (tarjeta) => {
-    console.table(tarjeta);
     // Almacenar la tarjeta seleccionada para eliminar
     confirm.require({
         message: `¿Estás seguro de eliminar la tarjeta ${tarjeta.alias}?`,
@@ -184,10 +183,10 @@ function actualizar_arr_tarjetas(tipo_request, data = false) {
             if(tarjeta.id == data.id){
                 return {
                     ...tarjeta,
-                    fecha_corte: data.fecha_corte,
-                    fecha_pago: data.fecha_pago,
+                    statement_date: data.statement_date,
+                    payment_date: data.payment_date,
                     alias: data.alias,
-                    limite_credito: data.limite_credito,
+                    credit_limit: data.credit_limit,
                 };
             }
             return tarjeta; // Devolver la tarjeta original si no coincide el id
@@ -200,18 +199,18 @@ function obtener_banco(label) {
   return bancoEncontrado ? bancoEncontrado.value : null;
 }
 function llenar_form_act_tdc(tarjeta){
-    
-    const id_banco = obtener_banco(tarjeta.nombre);
+    console.log(tarjeta);
+    const id_banco = obtener_banco(tarjeta.name);
 
     selected_banco.value = id_banco;
     form_actualizar_tdc.id = tarjeta.id;
-    form_actualizar_tdc.banco_id = selected_banco.value ;
+    form_actualizar_tdc.bank_id = selected_banco.value ;
     form_actualizar_tdc.alias = tarjeta.alias;
-    form_actualizar_tdc.limite_credito = tarjeta.limite_credito;
-    form_actualizar_tdc.fecha_corte = tarjeta.fecha_corte;
-    form_actualizar_tdc.fecha_pago = tarjeta.fecha_pago;
+    form_actualizar_tdc.credit_limit = tarjeta.credit_limit;
+    form_actualizar_tdc.statement_date = tarjeta.statement_date;
+    form_actualizar_tdc.payment_date = tarjeta.payment_date;
     mostrar_panel_act_tarjeta.value = true;
-    
+    console.log(form_actualizar_tdc);
 }
 function actualizar_tarjeta(){
     form_actualizar_tdc.put(route("tdc.actualizar",form_actualizar_tdc.id),{
@@ -264,11 +263,12 @@ function actualizar_tarjeta(){
                             v-for="item in tdc"
                             :key="tdc_card_key"
                             :id="item.id"
-                            :nombre="item.nombre"
+                            :bank_id="item.bank_id"
+                            :name="item.name"
                             :alias="item.alias"
-                            :limite_credito="item.limite_credito"
-                            :fecha_corte="item.fecha_corte"
-                            :fecha_pago="item.fecha_pago"
+                            :credit_limit="item.credit_limit"
+                            :statement_date="item.statement_date"
+                            :payment_date="item.payment_date"
                             :diferencia_dias="item.diferencia_dias"
                             @tarjeta_eliminar="confirmarEliminar"
                             @emitir_tdc_data = "llenar_form_act_tdc"
@@ -278,7 +278,7 @@ function actualizar_tarjeta(){
                         <tdc_form_update
                             v-if="mostrar_panel_act_tarjeta"
                             :form="form_actualizar_tdc"
-                            :bancos_catalogos="bancoOptions"
+                            :banks_catalogos="bancoOptions"
                             :errors="errors"
                             @emitir_actualizacion = "actualizar_tarjeta"
                         />
@@ -314,13 +314,13 @@ function actualizar_tarjeta(){
                                     checkmark
                                     :highlightOnSelect="false"
                                     class="!w-full !md:w-56"
-                                    :invalid="errors.banco_id != undefined"
+                                    :invalid="errors.bank_id != undefined"
                                 />
                             </div>
                             <small
-                                v-if="errors.banco_id"
+                                v-if="errors.bank_id"
                                 class="text-red-500 text-sm"
-                                >{{ errors.banco_id }}</small
+                                >{{ errors.bank_id }}</small
                             >
                         </div>
                         <div class="col-span-2 row-start-2 h-4/5">
@@ -348,7 +348,7 @@ function actualizar_tarjeta(){
                                     >Límite</label
                                 >
                                 <InputNumber
-                                    v-model="form.limite_credito"
+                                    v-model="form.credit_limit"
                                     inputId="limite"
                                     mode="currency"
                                     currency="MXN"
@@ -357,9 +357,9 @@ function actualizar_tarjeta(){
                                     placeholder="opcional"
                                 />
                                 <small
-                                    v-if="errors.limite_credito"
+                                    v-if="errors.credit_limit"
                                     class="text-red-500 text-sm"
-                                    >{{ errors.limite_credito }}
+                                    >{{ errors.credit_limit }}
                                 </small>
                             </section>
                         </div>

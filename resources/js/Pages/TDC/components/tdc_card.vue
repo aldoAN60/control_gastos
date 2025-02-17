@@ -6,24 +6,25 @@ import Button from 'primevue/button';
 
 const props = defineProps({
     id: Number,
-    nombre: String,
+    bank_id: Number,
+    name: String,
     alias: String,
-    limite_credito: Number || null,
-    fecha_corte: Number,
-    fecha_pago: Number,
+    credit_limit: Number || null,
+    statement_date: Number,
+    payment_date: Number,
 });
 
 
 
-const limite_credito_format = computed(() => {
-    if (!props.limite_credito) return "$ 0.00"; // Valor por defecto
+const credit_limit_format = computed(() => {
+    if (!props.credit_limit) return "$ 0.00"; // Valor por defecto
 
     const formatted = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-    }).format(Number(props.limite_credito));
+    }).format(Number(props.credit_limit));
 
     // Inserta un espacio después del símbolo de dólar
     return formatted.replace('$', '$ ');
@@ -33,8 +34,8 @@ const limite_credito_format = computed(() => {
  * Formatea las fechas de corte y pago basándose en el día del mes proporcionado y la fecha actual.
  *
  * @param {Object} fecha - Objeto que contiene las fechas de corte y pago.
- * @param {number} fecha.fecha_corte - Día del mes que representa la fecha de corte (1-31).
- * @param {number} fecha.fecha_pago - Día del mes que representa la fecha de pago (1-31).
+ * @param {number} fecha.statement_date - Día del mes que representa la fecha de corte (1-31).
+ * @param {number} fecha.payment_date - Día del mes que representa la fecha de pago (1-31).
  * @returns {Object} - Objeto con las fechas formateadas para la fecha de corte y fecha de pago.
  */
 const formatFecha = (fecha) => {
@@ -42,12 +43,12 @@ const formatFecha = (fecha) => {
 
     const fecha_actual = new Date();
     
-    let fa_es_mayor_fp = fecha_actual.getDate() > fecha.fecha_pago  ? 'mayor' : 'menor' ;
+    let fa_es_mayor_fp = fecha_actual.getDate() > fecha.payment_date  ? 'mayor' : 'menor' ;
 
-    let fecha_corte = null;
-    let fecha_pago = null;
+    let statement_date = null;
+    let payment_date = null;
 
-    let fc_es_mayor_fp = fecha.fecha_corte > fecha.fecha_pago ? true : false;
+    let fc_es_mayor_fp = fecha.statement_date > fecha.payment_date ? true : false;
     
 
     if(fa_es_mayor_fp == 'mayor'){
@@ -55,7 +56,7 @@ const formatFecha = (fecha) => {
         mes_actual.setMonth(fecha_actual.getMonth()  + 1);
 
         const mes = mes_actual.toLocaleString('default', {month:'short'});
-        fecha_pago = `${fecha.fecha_pago} ${mes}`;
+        payment_date = `${fecha.payment_date} ${mes}`;
 
     }else if(fa_es_mayor_fp == 'menor'){
 
@@ -63,7 +64,7 @@ const formatFecha = (fecha) => {
         mes_siguiente.setMonth(fecha_actual.getMonth());
 
         const mes = mes_siguiente.toLocaleString('default', {month:'short'});
-        fecha_pago = `${fecha.fecha_pago} ${mes}`; 
+        payment_date = `${fecha.payment_date} ${mes}`; 
 
     }
 
@@ -75,7 +76,7 @@ const formatFecha = (fecha) => {
             mes_actual.setMonth(fecha_actual.getMonth());
         }
         const mes = mes_actual.toLocaleString('default', {month:'short'});
-        fecha_corte = `${fecha.fecha_corte} ${mes}`; 
+        statement_date = `${fecha.statement_date} ${mes}`; 
 
     }else if(fa_es_mayor_fp == 'menor'){
         const mes_siguiente = new Date(fecha_actual);
@@ -86,12 +87,12 @@ const formatFecha = (fecha) => {
         }
 
         const mes = mes_siguiente.toLocaleString('default', {month:'short'});
-        fecha_corte = `${fecha.fecha_corte} ${mes}`; 
+        statement_date = `${fecha.statement_date} ${mes}`; 
     }
 
         const fechas_format = {
-            'fecha_corte': fecha_corte,
-            'fecha_pago': fecha_pago,
+            'statement_date': statement_date,
+            'payment_date': payment_date,
         };
         return fechas_format;
 };
@@ -106,28 +107,28 @@ const formatFecha = (fecha) => {
 const get_diferencia_fc_fp = (fc, fp) => {
     
     let respuesta = {
-        'fecha_corte' : {
+        'statement_date' : {
             'label' : 'Fecha corte',
             'fc' : null,
         },
-        'fecha_pago' : {
+        'payment_date' : {
             'label' : 'Fecha pago',
             'fp' : null
         }
     };
     let fechas = {
-        'fecha_corte': fc,
-        'fecha_pago': fp
+        'statement_date': fc,
+        'payment_date': fp
     };
 
     let formato = formatFecha(fechas);
-    respuesta['fecha_corte']['fc'] = formato['fecha_corte'];
-    respuesta['fecha_pago']['fp'] = formato['fecha_pago'];
+    respuesta['statement_date']['fc'] = formato['statement_date'];
+    respuesta['payment_date']['fp'] = formato['payment_date'];
     
     return respuesta
 };
 
-const fechas_fc_fp = get_diferencia_fc_fp(props.fecha_corte,props.fecha_pago);
+const fechas_fc_fp = get_diferencia_fc_fp(props.statement_date,props.payment_date);
 
 const emit = defineEmits(['tarjeta_eliminar','emitir_tdc_data']);
 
@@ -138,11 +139,12 @@ const eliminar_tarjeta = () => {
 function emitir_tdc_data(){
     emit('emitir_tdc_data',{
     id: props.id,
-    nombre: props.nombre,
+    bank_id: props.bank_id,
+    name: props.name,
     alias: props.alias,
-    limite_credito: props.limite_credito,
-    fecha_corte: props.fecha_corte,
-    fecha_pago: props.fecha_pago,
+    credit_limit: props.credit_limit,
+    statement_date: props.statement_date,
+    payment_date: props.payment_date,
     });
 }
 
@@ -163,19 +165,19 @@ function emitir_tdc_data(){
             
             <template #subtitle>
                 <p class="flex flex-row justify-between">
-                    <span class="text-sm truncate max-w-64">{{ nombre }}</span>
-                    <span v-if="limite_credito_format != '$ 0.00' " class="text-sm text-white max-w-20">{{ limite_credito_format }}</span>
+                    <span class="text-sm truncate max-w-64">{{ name }}</span>
+                    <span v-if="credit_limit_format != '$ 0.00' " class="text-sm text-white max-w-20">{{ credit_limit_format }}</span>
                 </p>
             </template>
             <template #content>
                 <section class="flex flex-row justify-between mt-2">
                     <p class="flex flex-col items-center"> 
-                        <span>{{ fechas_fc_fp.fecha_corte.label }}</span> 
-                        <span class="font-semibold">{{ fechas_fc_fp.fecha_corte.fc }}</span>
+                        <span>{{ fechas_fc_fp.statement_date.label }}</span> 
+                        <span class="font-semibold">{{ fechas_fc_fp.statement_date.fc }}</span>
                     </p>
                     <p class="flex flex-col items-center">
-                        <span>{{ fechas_fc_fp.fecha_pago.label }}</span> 
-                        <span class="font-semibold">{{ fechas_fc_fp.fecha_pago.fp }}</span>
+                        <span>{{ fechas_fc_fp.payment_date.label }}</span> 
+                        <span class="font-semibold">{{ fechas_fc_fp.payment_date.fp }}</span>
                     </p>
                 </section>
             </template>

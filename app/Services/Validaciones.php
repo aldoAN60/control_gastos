@@ -8,23 +8,23 @@ class Validaciones
     {
         $resultado = [];
         $rules = [
-            'banco_id' => 'required|integer|exists:bancos,id',
+            'bank_id' => 'required|integer|exists:banks,id',
             'alias' => 'required|string|max:20|min:5',
-            'limite_credito' => 'nullable|numeric|min:0',
-            'fecha_corte' => 'required|integer|min:1|max:31',
-            'fecha_pago' => 'required|integer|min:1|max:31',
+            'credit_limit' => 'nullable|numeric|min:0',
+            'statement_date' => 'required|integer|min:1|max:31',
+            'payment_date' => 'required|integer|min:1|max:31',
         ];
 
         $messages = [
-            'banco_id.required' => 'Selecciona un banco.',
+            'bank_id.required' => 'Selecciona un banco.',
             'alias.required' => 'El alias es necesario.',
             'alias.min' => 'El alias debe tener al menos 5 caracteres.',
-            'limite_credito.numeric' => 'El límite de crédito debe ser un número válido.',
-            'limite_credito.min' => 'El límite de crédito no puede ser negativo.',
-            'fecha_corte.required' => 'Selecciona el día en que se realiza el corte de tu tarjeta.',
-            'fecha_pago.required' => 'Selecciona el día en que debes realizar el pago de tu tarjeta.',
-            'fecha_corte' => 'El día de corte debe estar dentro del rango del 1 al 31. Selecciona un valor válido.',
-            'fecha_pago' => 'El día de pago debe estar dentro del rango del 1 al 31. Selecciona un valor válido.',
+            'credit_limit.numeric' => 'El límite de crédito debe ser un número válido.',
+            'credit_limit.min' => 'El límite de crédito no puede ser negativo.',
+            'statement_date.required' => 'Selecciona el día en que se realiza el corte de tu tarjeta.',
+            'payment_date.required' => 'Selecciona el día en que debes realizar el pago de tu tarjeta.',
+            'statement_date' => 'El día de corte debe estar dentro del rango del 1 al 31. Selecciona un valor válido.',
+            'payment_date' => 'El día de pago debe estar dentro del rango del 1 al 31. Selecciona un valor válido.',
         ];
 
         $validator = Validator::make($data, $rules, $messages);

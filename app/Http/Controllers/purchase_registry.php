@@ -37,7 +37,7 @@ class purchase_registry extends Core
             'payment_frequency' => $payment_frequency,
             'payment_method' => $payment_method,
         ]; 
-        return response()->json($props);
+        // return response()->json($props);
         return inertia::render('purchase_registry/index', $props);
     }
 

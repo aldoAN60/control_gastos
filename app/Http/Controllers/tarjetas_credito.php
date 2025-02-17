@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Models\Bancos;
+use App\Models\banks;
 use App\Services\Validaciones;
 use App\Models\tarjeta_credito;
 class tarjetas_credito extends Controller
@@ -22,13 +22,12 @@ class tarjetas_credito extends Controller
 
     public function index()
     {
-        $bancos = Bancos::all()->map(function ($banco) {
-            return $banco->only('id', 'nombre');
+        $banks = banks::all()->map(function ($banco) {
+            return $banco->only('id', 'name');
         });
         $tdc = tarjeta_credito::get_tarjetas();
-
         return Inertia::render('TDC/index', [
-            'bancos' => $bancos,
+            'banks' => $banks,
             'tdc' => $tdc,
         ]);
     }
@@ -47,11 +46,11 @@ class tarjetas_credito extends Controller
         $tarjeta_credito = tarjeta_credito::create([
             'user_id' => auth()->user()->id,
             'metodo_id' => $this->metodo_pago['tarjeta_credito'],
-            'banco_id' => $data['banco_id'],
+            'bank_id' => $data['bank_id'],
             'alias' => $data['alias'],
-            'limite_credito' => $data['limite_credito'],
-            'fecha_corte' => $data['fecha_corte'],
-            'fecha_pago' => $data['fecha_pago'],
+            'credit_limit' => $data['credit_limit'],
+            'statement_date' => $data['statement_date'],
+            'payment_date' => $data['payment_date'],
         ]);
         if ($tarjeta_credito) {
             $respuesta['exito'] = true;
@@ -83,11 +82,11 @@ class tarjetas_credito extends Controller
             return back()->withErrors($respuesta)->withInput();
         }
 
-        $tarjeta_credito->banco_id = $data['banco_id'];
+        $tarjeta_credito->bank_id = $data['bank_id'];
         $tarjeta_credito->alias = $data['alias'];
-        $tarjeta_credito->limite_credito = $data['limite_credito'];
-        $tarjeta_credito->fecha_corte = $data['fecha_corte'];
-        $tarjeta_credito->fecha_pago = $data['fecha_pago'];
+        $tarjeta_credito->credit_limit = $data['credit_limit'];
+        $tarjeta_credito->statement_date = $data['statement_date'];
+        $tarjeta_credito->payment_date = $data['payment_date'];
 
         if ($tarjeta_credito->save()) {
             $tarjeta_actualizada = tarjeta_credito::get_tarjeta($tarjeta_credito->id);

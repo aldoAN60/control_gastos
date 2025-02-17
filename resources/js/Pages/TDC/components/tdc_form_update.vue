@@ -9,14 +9,15 @@ import { ref } from "vue";
 
 const tdc_data = defineProps({
     form:Object,
-    bancos_catalogos:Array,
+    banks_catalogos:Array,
     errors: Object,
 });
+
 const cargando = ref(true);
 const emit = defineEmits(['emitir_actualizacion']);
 
-const fecha_corte = ref('');
-const fecha_pago = ref('');
+const statement_date = ref('');
+const payment_date = ref('');
 
 
 // Emitir evento cuando se hace click en el botón
@@ -31,21 +32,20 @@ onMounted(() => {
 function obtener_fecha_completa(form){
     let fecha_actual = new Date(); // Fecha base actual
     // Crear copias independientes para cada fecha
-    fecha_pago.value = new Date(fecha_actual);   // Copia de `fecha_actual` para `fecha_pago`
-    fecha_corte.value = new Date(fecha_actual);  // Copia de `fecha_actual` para `fecha_corte`
+    payment_date.value = new Date(fecha_actual);   // Copia de `fecha_actual` para `payment_date`
+    statement_date.value = new Date(fecha_actual);  // Copia de `fecha_actual` para `statement_date`
     // Asignar días específicos a cada fecha
-    fecha_pago.value.setDate(form.fecha_pago);    // `fecha_pago` obtiene el día de `tarjeta.fecha_pago`
-    fecha_corte.value.setDate(form.fecha_corte);  // `fecha_corte` obtiene el día de `tarjeta.fecha_corte`
+    payment_date.value.setDate(form.payment_date);    // `payment_date` obtiene el día de `tarjeta.payment_date`
+    statement_date.value.setDate(form.statement_date);  // `statement_date` obtiene el día de `tarjeta.statement_date`
 }
 function obtener_dia_del_mes(form){
 
-    let fc = fecha_corte.value.getDate();
-    let fp = fecha_pago.value.getDate();
+    let fc = statement_date.value.getDate();
+    let fp = payment_date.value.getDate();
     
-    form.fecha_corte = fc;
-    form.fecha_pago = fp;
+    form.statement_date = fc;
+    form.payment_date = fp;
 }
-
 
 
 </script>
@@ -57,11 +57,11 @@ function obtener_dia_del_mes(form){
             <div class="col-span-4 w-full min-h-24">
                 <div class="flex flex-col items-start">
                     <label for="banco" class="font-semibold w-28"
-                        >Bancos</label
+                        >Banco</label
                     >
                     <Select
-                        v-model="form.banco_id"
-                        :options="bancos_catalogos"
+                        v-model="form.bank_id"
+                        :options="banks_catalogos"
                         inputId="banco"
                         filter
                         optionLabel="label"
@@ -70,13 +70,13 @@ function obtener_dia_del_mes(form){
                         checkmark
                         :highlightOnSelect="false"
                         class="!w-full !md:w-56"
-                        :invalid="errors.banco_id != undefined"
+                        :invalid="errors.bank_id != undefined"
                     />
                 </div>
                 <small
-                    v-if="errors.banco_id"
+                    v-if="errors.bank_id"
                     class="text-red-500 text-sm"
-                    >{{ errors.banco_id }}</small
+                    >{{ errors.bank_id }}</small
                 >
             </div>
             <div class="col-span-2 row-start-2 h-4/5 w-full">
@@ -102,7 +102,7 @@ function obtener_dia_del_mes(form){
                         >Límite</label
                     >
                     <InputNumber
-                        v-model="form.limite_credito"
+                        v-model="form.credit_limit"
                         inputId="limite"
                         mode="currency"
                         currency="MXN"
@@ -112,33 +112,33 @@ function obtener_dia_del_mes(form){
                         class="!w-2/4"
                     />
                     <small
-                        v-if="errors.limite_credito"
+                        v-if="errors.credit_limit"
                         class="text-red-500 text-sm"
-                        >{{ errors.limite_credito }}
+                        >{{ errors.credit_limit }}
                     </small>
                 </section>
             </div>
             <div class="col-span-2 col-start-1 row-start-3 h-4/5 w-full">
                 <section class="flex flex-col items-center ">
-                    <label for="fecha_corte" class="font-semibold w-28"
+                    <label for="statement_date" class="font-semibold w-28"
                         >Fecha de corte</label>
-                    <DatePicker v-model="fecha_corte" dateFormat="dd/mm/y" />
+                    <DatePicker v-model="statement_date" dateFormat="dd/mm/y" />
                     <small
-                        v-if="errors.limite_credito"
+                        v-if="errors.credit_limit"
                         class="text-red-500 text-sm"
-                        >{{ errors.limite_credito }}
+                        >{{ errors.credit_limit }}
                     </small>
                 </section>
             </div>
             <div class="col-span-2 col-start-3 row-start-3 h-4/5 w-full">
                 <section class="flex flex-col items-center ">
-                    <label for="fecha_pago" class="font-semibold w-28"
+                    <label for="payment_date" class="font-semibold w-28"
                         >Fecha de pago</label>
-                        <DatePicker v-model="fecha_pago" dateFormat="dd/mm/y" />
+                        <DatePicker v-model="payment_date" dateFormat="dd/mm/y" />
                     <small
-                        v-if="errors.limite_credito"
+                        v-if="errors.credit_limit"
                         class="text-red-500 text-sm"
-                        >{{ errors.limite_credito }}
+                        >{{ errors.credit_limit }}
                     </small>
                 </section>
             </div>

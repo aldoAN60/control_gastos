@@ -10,13 +10,12 @@ class tarjeta_credito extends Model
     protected $table = "TDC";
     protected $fillable = [
         'user_id',
-        'metodo_id',
-        'banco_id',
+        'method_id',
+        'bank_id',
         'alias',
-        'limite_credito',
-        'fecha_corte',
-        'fecha_pago',
-        'diferencia_dias',
+        'credit_limit',
+        'statement_date',
+        'payment_date',
     ];
     use HasFactory;
 
@@ -24,20 +23,20 @@ class tarjeta_credito extends Model
         return $this->hasMany(purchase_registry::class, 'tdc_id');
     }
     public function banco(){
-        return $this->belongsTo(bancos::class, 'banco_id');
+        return $this->belongsTo(banks::class, 'bank_id');
     }
 
     public static function get_tarjetas(){
-        $q_tdcs = tarjeta_credito::select('tdc.id', 'b.nombre', 'tdc.alias', 'tdc.limite_credito', 'tdc.fecha_corte','tdc.fecha_pago')
-                ->join('bancos as b', 'b.id', '=', 'tdc.banco_id')
+        $q_tdcs = tarjeta_credito::select('tdc.id', 'b.id as bank_id', 'b.name', 'tdc.alias', 'tdc.credit_limit', 'tdc.statement_date','tdc.payment_date')
+                ->join('banks as b', 'b.id', '=', 'tdc.bank_id')
                 ->where('user_id', auth()->id()) // Usar el ID del usuario autenticado
                 ->get();
 
                 return $q_tdcs;
     }
     public static function get_tarjeta($id){
-        $q_tdcs = tarjeta_credito::select('tdc.id', 'b.nombre', 'tdc.alias', 'tdc.limite_credito', 'tdc.fecha_corte','tdc.fecha_pago')
-                ->join('bancos as b', 'b.id', '=', 'tdc.banco_id')
+        $q_tdcs = tarjeta_credito::select('tdc.id', 'b.name', 'tdc.alias', 'tdc.credit_limit', 'tdc.statement_date','tdc.payment_date')
+                ->join('banks as b', 'b.id', '=', 'tdc.bank_id')
                 ->where('user_id', auth()->id()) // Usar el ID del usuario autenticado
                 ->where('tdc.id',$id)
                 ->first();

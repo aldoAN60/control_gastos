@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('TDC', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->nullable(false);
-            $table->integer('metodo_id')->nullable(false);
-            $table->integer('banco_id')->nullable(false);
+            $table->integer('method_id')->nullable(false);
+            $table->integer('bank_id')->nullable(false);
             $table->string('alias')->nullable();
-            $table->integer('limite_credito')->nullable();
-            $table->integer('fecha_corte')->nullable(false);
-            $table->integer('fecha_pago')->nullable(false);
+            $table->integer('credit_limit')->nullable();
+            $table->integer('statement_date')->nullable(false);
+            $table->integer('payment_date')->nullable(false);
             $table->timestamps();
             
         });

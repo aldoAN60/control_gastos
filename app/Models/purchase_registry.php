@@ -62,7 +62,7 @@ class purchase_registry extends Model
 
         return $query->with([
             'user:id,nombre,apellido_paterno,apellido_materno,email',
-            'tdc:id,alias,banco_id',
+            'tdc:id,alias,bank_id',
             'tdc.banco:id,nombre', 
             'category:id,name',
             'sub_category:id,name',
@@ -136,7 +136,7 @@ class purchase_registry extends Model
         return [
             'id' => $tdc['id'],
             'alias' => $tdc['alias'],
-            'bank_id' => $tdc['banco_id'],
+            'bank_id' => $tdc['bank_id'],
             'bank_name' => $tdc['banco']['nombre'] ?? null,
         ];
     }
