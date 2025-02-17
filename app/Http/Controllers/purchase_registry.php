@@ -30,12 +30,14 @@ class purchase_registry extends Core
         $categories = category::get_categories();
         $payment_frequency = payment_frequency::select('id','frequency','days')->orderBy('days')->get();
         $payment_method = payment_method::all();
+        $tdc = tarjeta_credito::get_tarjetas();
         
         $props = [
             'purchase_registries' => $pr, // Asegúrate que el nombre es 'purchase_registries'
             'categories' => $categories,
             'payment_frequency' => $payment_frequency,
             'payment_method' => $payment_method,
+            'tdc' => $tdc
         ]; 
         // return response()->json($props);
         return inertia::render('purchase_registry/index', $props);

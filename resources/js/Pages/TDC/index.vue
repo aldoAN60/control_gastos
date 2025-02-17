@@ -27,7 +27,6 @@ const mostrar_panel_act_tarjeta = ref(false);
 const { props } = usePage();
 const banks = ref(props.banks);
 const tdc = ref(props.tdc);
-console.log(tdc);
 // Banco seleccionado por el usuario
 const selected_banco = ref(null);
 
@@ -43,7 +42,6 @@ const convert_string_to_date = (date_str) => {
     const fecha = new Date(date_str);
 
     if (isNaN(fecha.getTime())) {
-        console.error("Fecha no válida");
         return null;
     }
 
@@ -199,7 +197,6 @@ function obtener_banco(label) {
   return bancoEncontrado ? bancoEncontrado.value : null;
 }
 function llenar_form_act_tdc(tarjeta){
-    console.log(tarjeta);
     const id_banco = obtener_banco(tarjeta.name);
 
     selected_banco.value = id_banco;
@@ -210,7 +207,6 @@ function llenar_form_act_tdc(tarjeta){
     form_actualizar_tdc.statement_date = tarjeta.statement_date;
     form_actualizar_tdc.payment_date = tarjeta.payment_date;
     mostrar_panel_act_tarjeta.value = true;
-    console.log(form_actualizar_tdc);
 }
 function actualizar_tarjeta(){
     form_actualizar_tdc.put(route("tdc.actualizar",form_actualizar_tdc.id),{

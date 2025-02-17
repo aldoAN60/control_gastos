@@ -19,6 +19,21 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    categories: {
+    type: Array,
+    required: true,
+  },
+  payment_frequency: {
+    type: Array,
+    required: true,
+  },
+  payment_method: {
+    type: Array,
+    required: true,
+  },
+  tdc: {
+    type: Array,
+  },
 });
 
 const formattedRegistries = ref(props.registries.map((registry) => ({
@@ -32,8 +47,6 @@ const editingRows = ref([]);
 const onRowEditSave = (event) => {
     let { newData, index } = event;
 
-    // Guardamos una copia de los registros en edición
-    console.log(editingRows);
     // Actualizamos el registro localmente antes de la solicitud
     formattedRegistries.value[index] = newData;
 
@@ -68,13 +81,11 @@ const selected_registry = ref({});
 function open_edit_dialog(registry){
 
     selected_registry.value = {...registry};
-    console.log(selected_registry.value);
     edit_dialog_visible.value = true;
 }
 
 function save_changes(update_changes){
     edit_dialog_visible.value = false;
-    console.log("chidote".update_changes);
 }
 
 

@@ -63,7 +63,7 @@ class purchase_registry extends Model
         return $query->with([
             'user:id,nombre,apellido_paterno,apellido_materno,email',
             'tdc:id,alias,bank_id',
-            'tdc.banco:id,nombre', 
+            'tdc.banco:id,name', 
             'category:id,name',
             'sub_category:id,name',
             'payment_method:id,method',
