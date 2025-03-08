@@ -1,15 +1,12 @@
 <script setup>
 // primeVUE components
 import DataTable from 'primevue/datatable';
+import ContextMenu from 'primevue/contextmenu';
 import Column from 'primevue/column';
 import formatDate from '@/helpers/commons';
-import Message from 'primevue/message';
 import Button from 'primevue/button';
 // vue components
 import { ref } from 'vue';
-import InputText from 'primevue/inputtext';
-import { router } from '@inertiajs/vue3'
-
 import messageStore from "@/stores/messageStore";
 import edit_dialog from './edit_dialog.vue';
 
@@ -22,56 +19,29 @@ const props = defineProps({
     categories: {
     type: Array,
     required: true,
-  },
-  payment_frequency: {
-    type: Array,
-    required: true,
-  },
-  payment_method: {
-    type: Array,
-    required: true,
-  },
-  tdc: {
-    type: Array,
-  },
+    },
+    payment_frequency: {
+        type: Array,
+        required: true,
+    },
+    payment_method: {
+        type: Array,
+        required: true,
+    },
+    tdc: {
+        type: Array,
+    },
+    spend_type: {
+        type: Array,
+        required: true,
+    }
 });
+
 
 const formattedRegistries = ref(props.registries.map((registry) => ({
     ...registry,
     formattedDate: formatDate(registry.created_at), // Formatear la fecha
 })));
-
-const editingRows = ref([]);
-
-
-const onRowEditSave = (event) => {
-    let { newData, index } = event;
-
-    // Actualizamos el registro localmente antes de la solicitud
-    formattedRegistries.value[index] = newData;
-
-    router.put(route('pr.update'), newData, {
-        onSuccess: (response) => {
-            let res = response.props.flash.data;
-            messageStore.mostrarMensaje(res.message, res.severity);
-
-            // Limpiar errores si la solicitud fue exitosa
-            validation_errors.value = {};
-
-            // Cerrar la edición de la fila eliminándola del objeto
-        },
-        onError: (errors) => {
-            // Guardamos los errores
-            validation_errors.value = errors;
-
-        }
-    });
-};
-
-
-
-
-const validation_errors = ref({});
 
 // edit dialog variables
 
@@ -87,18 +57,31 @@ function open_edit_dialog(registry){
 function save_changes(update_changes){
     edit_dialog_visible.value = false;
 }
+const cm = ref();
+const menuModel = ref([
+    {label: 'Mas detalles', icon: 'pi pi-fw pi-search', command: () => viewProduct(selected_registry)},
+    {label: 'Eliminar', icon: 'pi pi-fw pi-times', command: () => delete_registry(selected_registry)}
+]);
+const onRowContextMenu = (event) => {
+    cm.value.show(event.originalEvent);
+};
+
 
 
 </script>
 
 <template>
 
+    <ContextMenu ref="cm" :model="menuModel" @hide="selected_registry = null" />
     <DataTable
         :value="formattedRegistries"
         dataKey="id"
         rowGroupMode="subheader"
         stripedRows
         tableStyle="min-width: 50rem"
+        contextMenu
+        v-model:contextMenuSelection="selected_registry"
+        @rowContextmenu="onRowContextMenu"
     >
         <Column field="id" header="#"/>
         
@@ -119,12 +102,10 @@ function save_changes(update_changes){
         :visible="edit_dialog_visible"
         @update:visible="edit_dialog_visible = $event"
         :selected_registry="selected_registry"
+        :categoryOptions = "categories"
+        :paymentMethodOptions="payment_method"
+        :tdcOptions="tdc"
+        :spendTypeOptions="spend_type"
         @save="save_changes"
     />
-
 </template>
- <!-- * * * DATA QUE IRA EN LA OPCION MAS DETALLES * * * -->
-        <!-- <Column header="Sub cateogoria" field="sub_category.name" />
-        <Column field="tdc.alias" header="nombre metodo"></Column>
-        <Column field="purchase_registry_credit" header="Compra realizada a credito"></Column>
-        <Column field="purchase_registry_frequent" header="Compra frecuente"></Column> -->

@@ -1,3 +1,68 @@
+<script setup>
+import { defineProps, defineEmits, ref, watch } from "vue";
+import Dialog from "primevue/dialog";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
+import InputNumber from "primevue/inputnumber";
+import Dropdown from "primevue/dropdown";
+import Calendar from "primevue/calendar";
+
+    const props = defineProps({
+        visible: Boolean,
+        selected_registry: Object,
+        tdcOptions: Array,
+        categoryOptions: Array,
+        paymentMethodOptions: Array,
+        payment_frequency: Array,
+        spendTypeOptions: Array,
+    });
+
+// varaibles for props    
+    const dialogVisible = ref(props.visible);
+    const registry = ref({ ...props.selected_registry });
+    const categoryOptions = ref(props.categoryOptions);
+    const paymentMethodOptions = ref(props.paymentMethodOptions);
+    const spendTypeOptions = ref(props.spendTypeOptions);
+    const subCategoryOptions = ref();
+
+    function  get_sub_category_by_category(get_list = false){
+        const selectedCategory = categoryOptions.value.find(
+        category => category.category_id === registry.value.category.id
+    );
+
+    if (selectedCategory) {
+        registry.value.sub_categories = selectedCategory.sub_categories;
+    } else {
+        registry.value.sub_categories = []; // Si no hay categoría seleccionada, limpiar subcategorías
+    }
+
+    subCategoryOptions.value = registry.value.sub_categories;
+
+    }   
+
+    const emit = defineEmits(["update:visible", "save"]);
+    // Sincronizar estado con props
+    watch(() => props.visible, (newVal) => {
+        dialogVisible.value = newVal;
+    });
+
+    // // Sincronizar el modelo
+    watch(() => props.selected_registry, (newVal) => {
+        registry.value = { ...newVal };
+        get_sub_category_by_category();
+
+    });
+
+    const closeDialog = () => {
+        emit("update:visible", false);
+    };
+
+    const saveChanges = () => {
+        emit("save", registry.value);
+        closeDialog();
+    };
+</script>
+
 <template>
     <Dialog 
         :visible="dialogVisible" 
@@ -39,9 +104,10 @@
                     id="category" 
                     v-model="registry.category.id" 
                     :options="categoryOptions" 
-                    optionLabel="name" 
-                    optionValue="id"
+                    optionLabel="category" 
+                    optionValue="category_id"
                     placeholder="Selecciona una categoría"
+                    @change="get_sub_category_by_category"
                 />
             </div>
 
@@ -52,8 +118,8 @@
                     id="subCategory" 
                     v-model="registry.sub_category.id" 
                     :options="subCategoryOptions" 
-                    optionLabel="name" 
-                    optionValue="id"
+                    optionLabel="sub_category" 
+                    optionValue="sub_category_id"
                     placeholder="Selecciona una subcategoría"
                 />
             </div>
@@ -78,6 +144,8 @@
                     id="spendType" 
                     v-model="registry.spend_type" 
                     :options="spendTypeOptions" 
+                    optionLabel="" 
+                    optionValue="" 
                     placeholder="Selecciona el tipo de gasto"
                 />
             </div>
@@ -100,41 +168,3 @@
     </Dialog>
 </template>
 
-<script setup>
-import { defineProps, defineEmits, ref, watch } from "vue";
-import Dialog from "primevue/dialog";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
-import InputNumber from "primevue/inputnumber";
-import Dropdown from "primevue/dropdown";
-import Calendar from "primevue/calendar";
-
-    const props = defineProps({
-        visible: Boolean,
-        selected_registry: Object,
-    });
-
-    const emit = defineEmits(["update:visible", "save"]);
-
-    const dialogVisible = ref(props.visible);
-    const registry = ref({ ...props.selected_registry });
-
-    // Sincronizar estado con props
-    watch(() => props.visible, (newVal) => {
-        dialogVisible.value = newVal;
-    });
-
-    // Sincronizar el modelo
-    watch(() => props.selected_registry, (newVal) => {
-        registry.value = { ...newVal };
-    });
-
-    const closeDialog = () => {
-        emit("update:visible", false);
-    };
-
-    const saveChanges = () => {
-        emit("save", registry.value);
-        closeDialog();
-    };
-</script>

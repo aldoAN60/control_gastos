@@ -30,6 +30,10 @@ const props = defineProps({
   tdc: {
     type: Array,
   },
+  spend_type:{
+    type:Array,
+    required:true
+  }
 });
 </script>
 
@@ -48,6 +52,7 @@ const props = defineProps({
             :payment_frequency = "props.payment_frequency"
             :payment_method = "props.payment_method"
             :tdc = "props.tdc"
+            :spend_type ="props.spend_type"
             
             ></purchase_table>
         </template>
