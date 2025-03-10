@@ -9,6 +9,8 @@ import Button from 'primevue/button';
 import { ref } from 'vue';
 import messageStore from "@/stores/messageStore";
 import edit_dialog from './edit_dialog.vue';
+import { useForm } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3'
 
 const props = defineProps({
     title: String,
@@ -36,12 +38,22 @@ const props = defineProps({
         required: true,
     }
 });
+// emits
+const emit = defineEmits(["reload_table"]);
 
+// const formattedRegistries = ref(props.registries.map((registry) => ({
+//     ...registry,
+//     formattedDate: formatDate(registry.created_at), // Formatear la fecha
+// })));
 
-const formattedRegistries = ref(props.registries.map((registry) => ({
-    ...registry,
-    formattedDate: formatDate(registry.created_at), // Formatear la fecha
-})));
+// Función para formatear los registros
+function formatRegistries(registries) {
+    return registries.map((registry) => ({
+        ...registry,
+        formattedDate: formatDate(registry.created_at), // Formatear la fecha
+    }));
+}
+const formattedRegistries = ref(formatRegistries(props.registries));
 
 // edit dialog variables
 
@@ -56,14 +68,7 @@ function open_edit_dialog() {
     edit_dialog_visible.value = true;
 }
 
-function  delete_registry(){
-   console.log("se elimino");
-};
 
-
-function save_changes(update_changes){
-    edit_dialog_visible.value = false;
-}
 const cm = ref();
 const menuModel = ref([
     { label: 'Mas detalles', icon: 'pi pi-fw pi-search', command: () => open_edit_dialog() },
@@ -79,7 +84,27 @@ const onRowContextMenu = (event) => {
     cm.value.show(event.originalEvent);
 };
 
+/* actulizar y eliminar*/
+function  delete_registry(){
+   console.log("se elimino");
+};
 
+
+function update_registry_child(data){
+    router.put(route('pr.update'),data, {
+        onError:(validationErrors) => {
+            console.error(validationErrors);
+        },
+        onSuccess:(data) => {
+            // emit('reload_table',data);
+            const updatedRegistries = formatRegistries(data.props.purchase_registries);
+
+            // Actualizamos la variable reactiva con los registros formateados
+            formattedRegistries.value = updatedRegistries;
+            edit_dialog_visible.value = false;
+        }
+    });
+}
 
 </script>
 
@@ -113,6 +138,6 @@ const onRowContextMenu = (event) => {
         :paymentMethodOptions="payment_method"
         :tdcOptions="tdc"
         :spendTypeOptions="spend_type"
-        @save="save_changes"
+        @update_registry="update_registry_child"
     />
 </template>

@@ -25,24 +25,32 @@ class purchase_registry extends Core
     }
     public function index()
     {
-        $registries = PR::PurchaseRegistry()->get();
-        $pr = PR::format_registries($registries);
-        $categories = category::get_categories();
-        $payment_frequency = payment_frequency::select('id','frequency','days')->orderBy('days')->get();
-        $payment_method = payment_method::all();
-        $tdc = tarjeta_credito::get_tarjetas();
-        $spend_type = array_values( config('app.spend_type'));
+        // $registries = PR::PurchaseRegistry()->get();
+        // $pr = PR::format_registries($registries);
+        // $categories = category::get_categories();
+        // $payment_frequency = payment_frequency::select('id','frequency','days')->orderBy('days')->get();
+        // $payment_method = payment_method::all();
+        // $tdc = tarjeta_credito::get_tarjetas();
+        // $spend_type = array_values( config('app.spend_type'));
 
-        $props = [
-            'purchase_registries' => $pr, // Asegúrate que el nombre es 'purchase_registries'
-            'categories' => $categories,
-            'payment_frequency' => $payment_frequency,
-            'payment_method' => $payment_method,
-            'tdc' => $tdc,
-            'spend_type' => $spend_type
-        ]; 
+        // $props = [
+        //     'purchase_registries' => $pr, // Asegúrate que el nombre es 'purchase_registries'
+        //     'categories' => $categories,
+        //     'payment_frequency' => $payment_frequency,
+        //     'payment_method' => $payment_method,
+        //     'tdc' => $tdc,
+        //     'spend_type' => $spend_type
+        // ]; 
         // return response()->json($props);
-        return inertia::render('purchase_registry/index', $props);
+        // return inertia::render('purchase_registry/index', $props);
+        return Inertia::render('purchase_registry/index', [
+            'purchase_registries' => fn () => PR::format_registries(PR::PurchaseRegistry()->get()),
+            'categories' => category::get_categories(),
+            'payment_frequency' => payment_frequency::select('id','frequency','days')->orderBy('days')->get(),
+            'payment_method' => payment_method::all(),
+            'tdc' => tarjeta_credito::get_tarjetas(),
+            'spend_type' => array_values(config('app.spend_type'))
+        ]);
     }
 
     public function register_purchase(Request $request){
@@ -117,7 +125,8 @@ class purchase_registry extends Core
         } catch (\Exception $e) {
             $response = ['success' => false, 'message' => 'Error inesperado al actualizar el registro', 'severity' => 'error'];
         }
-        $route = 'pr.index';
-        return $this->response( $response, $source, $route);
+        // return response()->json($response);
+        return back()->with('response', $response);
+
     }
 }

@@ -25,7 +25,7 @@ class Core extends Controller
         if ($source == 'API') {
             return response()->json($response);
         } else {
-            return redirect()->route($route)->with('data', $response); // Cambia 'some.route' por la ruta adecuada
+            return redirect()->route($route)->with('data', $response);
         }
     }
 }

@@ -45,12 +45,12 @@ class Validaciones
             'tdc_id' => 'nullable|integer|exists:tdc,id',
             'concept' => 'required|string|max:24|min:4|regex:/^[a-zA-Z0-9\s]+$/',
             'amount' => 'required|numeric|min:1',
-            'category_id' => 'required|integer|exists:categorias,id',
-            'sub_category_id' => 'required|integer|exists:categorias,id',
+            'category_id' => 'required|integer|exists:categories,id',
+            'sub_category_id' => 'required|integer|exists:categories,id',
             'spend_type' => 'required|string|in:necesario,secundario,precindible',
-            'payment_method_id' => 'required|integer|exists:metodo_pago,id',
-            'purchase_registry_frequent_id' => 'nullable|integer,exists:registro_compras_frecuentes,id',
-            'purchase_registry_credit_id' => 'nullable|integer,exists:registro_compras_credito,id',
+            'payment_method_id' => 'required|integer|exists:payment_method,id',
+            'purchase_registry_frequent_id' => 'nullable|integer,exists:purchase_registry_frequent,id',
+            'purchase_registry_credit_id' => 'nullable|integer,exists:purchase_registry_credit,id',
             'delete' => 'nullable|boolean',
         ];
 

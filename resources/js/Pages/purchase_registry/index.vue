@@ -1,7 +1,8 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import purchase_table from "./components/purchase_table.vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { router } from '@inertiajs/vue3'
 
 
 
@@ -35,6 +36,26 @@ const props = defineProps({
     required:true
   }
 });
+const registries = ref(props.purchase_registries); // Hacer la tabla reactiva
+
+// Watch para actualizar la tabla cuando props.purchase_registries cambie
+// watch(() => props.purchase_registries, (newRegistries) => {
+//   console.log("✅ Se detectó cambio en purchase_registries");
+//   registries.value = [...newRegistries]; // Forzar reactividad
+// });
+
+
+function reload_purchase_table() {
+  router.reload({ 
+    only: ["purchase_registries"],
+    onSuccess: () => {
+      console.log("🔄 Nuevos datos recibidos:", props.purchase_registries);
+      registries.value = [...props.purchase_registries]; 
+    }
+  });
+}
+
+
 </script>
 
 <template>
@@ -47,14 +68,14 @@ const props = defineProps({
         <template #header> Registro Gastos </template>
         <template #main_content>
             <purchase_table 
-            :registries = "props.purchase_registries"
+            :registries="registries"
             :categories = "props.categories"
             :payment_frequency = "props.payment_frequency"
             :payment_method = "props.payment_method"
             :tdc = "props.tdc"
             :spend_type ="props.spend_type"
-            
-            ></purchase_table>
+            @reload_table="reload_purchase_table"
+            />
         </template>
     </AppLayout>
 </template>

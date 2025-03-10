@@ -4,8 +4,9 @@ import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
-import Dropdown from "primevue/dropdown";
-import Calendar from "primevue/calendar";
+import Select from "primevue/select";
+import DatePicker from 'primevue/datepicker';
+
 
     const props = defineProps({
         visible: Boolean,
@@ -39,7 +40,8 @@ import Calendar from "primevue/calendar";
             subCategoryOptions.value = registry.value.sub_categories;
     }   
 
-    const emit = defineEmits(["update:visible", "save"]);
+    const emit = defineEmits(["update:visible", "update_registry"]);
+
     // Sincronizar estado con props
     watch(() => props.visible, (newVal) => {
         dialogVisible.value = newVal;
@@ -61,8 +63,8 @@ import Calendar from "primevue/calendar";
         emit("update:visible", false);
     };
 
-    const saveChanges = () => {
-        emit("save", registry.value);
+    const update_registry = () => {
+        emit("update_registry", registry.value);
         closeDialog();
     };
 </script>
@@ -91,7 +93,7 @@ import Calendar from "primevue/calendar";
             <!-- Tarjeta de Crédito -->
             <div class="field">
                 <label for="tdc">Tarjeta de Crédito</label>
-                <Dropdown 
+                <Select 
                     id="tdc" 
                     v-model="registry.tdc.id" 
                     :options="tdcOptions" 
@@ -104,7 +106,7 @@ import Calendar from "primevue/calendar";
             <!-- Categoría -->
             <div class="field">
                 <label for="category">Categoría</label>
-                <Dropdown 
+                <Select 
                     id="category" 
                     v-model="registry.category.id" 
                     :options="categoryOptions" 
@@ -118,7 +120,7 @@ import Calendar from "primevue/calendar";
             <!-- Subcategoría -->
             <div class="field">
                 <label for="subCategory">Subcategoría</label>
-                <Dropdown 
+                <Select 
                     id="subCategory" 
                     v-model="registry.sub_category.id" 
                     :options="subCategoryOptions" 
@@ -131,7 +133,7 @@ import Calendar from "primevue/calendar";
             <!-- Método de Pago -->
             <div class="field">
                 <label for="paymentMethod">Método de Pago</label>
-                <Dropdown 
+                <Select 
                     id="paymentMethod" 
                     v-model="registry.payment_method.id" 
                     :options="paymentMethodOptions" 
@@ -144,7 +146,7 @@ import Calendar from "primevue/calendar";
             <!-- Tipo de Gasto -->
             <div class="field">
                 <label for="spendType">Tipo de Gasto</label>
-                <Dropdown 
+                <Select 
                     id="spendType" 
                     v-model="registry.spend_type" 
                     :options="spendTypeOptions" 
@@ -157,17 +159,17 @@ import Calendar from "primevue/calendar";
             <!-- Fecha de Compra -->
             <div class="field">
                 <label for="purchaseDate">Fecha de Compra</label>
-                <Calendar 
+                <DatePicker 
                     id="purchaseDate" 
                     v-model="registry.formattedDate" 
                     dateFormat="dd/mm/yy"
                 />
             </div>
-        </div>
+    </div>
 
         <template #footer>
             <Button label="Cancelar" icon="pi pi-times" @click="closeDialog" class="p-button-text" />
-            <Button label="Guardar" icon="pi pi-check" @click="saveChanges" />
+            <Button label="Guardar" icon="pi pi-check" @click="update_registry" />
         </template>
     </Dialog>
 </template>
