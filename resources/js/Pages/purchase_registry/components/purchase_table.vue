@@ -47,22 +47,35 @@ const formattedRegistries = ref(props.registries.map((registry) => ({
 
 const edit_dialog_visible = ref(false);
 const selected_registry = ref({});
+const registry_to_update = ref({});
 
-function open_edit_dialog(registry){
-
-    selected_registry.value = {...registry};
+function open_edit_dialog() {
+    registry_to_update.value = selected_registry.value;
+        
+    
     edit_dialog_visible.value = true;
 }
+
+function  delete_registry(){
+   console.log("se elimino");
+};
+
 
 function save_changes(update_changes){
     edit_dialog_visible.value = false;
 }
 const cm = ref();
 const menuModel = ref([
-    {label: 'Mas detalles', icon: 'pi pi-fw pi-search', command: () => viewProduct(selected_registry)},
-    {label: 'Eliminar', icon: 'pi pi-fw pi-times', command: () => delete_registry(selected_registry)}
+    { label: 'Mas detalles', icon: 'pi pi-fw pi-search', command: () => open_edit_dialog() },
+    {label: 'Eliminar', icon: 'pi pi-fw pi-times', command: () => delete_registry()}
 ]);
+
 const onRowContextMenu = (event) => {
+    if (!event.data) {
+        return;
+    }
+    
+    selected_registry.value = event.data;
     cm.value.show(event.originalEvent);
 };
 
@@ -91,17 +104,11 @@ const onRowContextMenu = (event) => {
         <Column field="payment_method.method" header="Método de pago"/>
         <Column field="formattedDate" header="Fecha de la compra"/>
         <Column field="sub_category.name" header="Sub categoría"/>
-        <Column :exportable="false" style="min-width: 12rem">
-            <template #body="{ data }">
-                <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="open_edit_dialog(data)"/>
-                <Button icon="pi pi-trash" outlined rounded severity="danger"/>
-            </template>
-        </Column>
     </DataTable>
     <edit_dialog 
         :visible="edit_dialog_visible"
         @update:visible="edit_dialog_visible = $event"
-        :selected_registry="selected_registry"
+        :selected_registry="registry_to_update"
         :categoryOptions = "categories"
         :paymentMethodOptions="payment_method"
         :tdcOptions="tdc"

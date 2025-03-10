@@ -25,19 +25,18 @@ import Calendar from "primevue/calendar";
     const spendTypeOptions = ref(props.spendTypeOptions);
     const subCategoryOptions = ref();
 
-    function  get_sub_category_by_category(get_list = false){
-        const selectedCategory = categoryOptions.value.find(
-        category => category.category_id === registry.value.category.id
-    );
+    function  get_sub_category_by_category(){
+            const selectedCategory = categoryOptions.value.find(
+            category => category.category_id === registry.value.category.id
+        );
 
-    if (selectedCategory) {
-        registry.value.sub_categories = selectedCategory.sub_categories;
-    } else {
-        registry.value.sub_categories = []; // Si no hay categoría seleccionada, limpiar subcategorías
-    }
+            if (selectedCategory) {
+                registry.value.sub_categories = selectedCategory.sub_categories;
+            } else {
+                registry.value.sub_categories = []; // Si no hay categoría seleccionada, limpiar subcategorías
+            }
 
-    subCategoryOptions.value = registry.value.sub_categories;
-
+            subCategoryOptions.value = registry.value.sub_categories;
     }   
 
     const emit = defineEmits(["update:visible", "save"]);
@@ -48,10 +47,15 @@ import Calendar from "primevue/calendar";
 
     // // Sincronizar el modelo
     watch(() => props.selected_registry, (newVal) => {
+        if (!newVal || !newVal.category) { 
+            registry.value = {};  // Evitar asignar valores incorrectos
+            return;
+        }
+
         registry.value = { ...newVal };
         get_sub_category_by_category();
-
     });
+
 
     const closeDialog = () => {
         emit("update:visible", false);
