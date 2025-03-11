@@ -74,7 +74,7 @@ import DatePicker from 'primevue/datepicker';
         :visible="dialogVisible" 
         @update:visible="(val) => emit('update:visible', val)"
         modal 
-        header="Editar Registro" 
+        header="Editar Compra" 
         :style="{ width: '40rem' }"
     >
     <div class="p-fluid">

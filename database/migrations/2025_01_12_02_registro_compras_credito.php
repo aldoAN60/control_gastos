@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('concept', 24); // Concepto de la compra
             $table->decimal('amount', 10, 2); // Monto del crédito
             $table->foreignId('user_id')->constrained('users'); // Relación con la tabla users
-            $table->enum('expense_type', ['necesario', 'secundario', 'precindible']); // Tipo de gasto
+            $table->enum('spend_type', ['necesario', 'secundario', 'precindible']); // Tipo de gasto
             $table->foreignId('tdc_id')->nullable()->constrained('tdc'); // Relación con la tabla tdc
             $table->foreignId('category_id')->constrained('categories'); // Relación con la tabla categorias
             $table->foreignId('sub_category_id')->constrained('categories'); // Relación con la tabla categorias (subcategorías)

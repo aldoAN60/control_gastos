@@ -67,9 +67,9 @@ class purchase_registry extends Model
             'category:id,name',
             'sub_category:id,name',
             'payment_method:id,method',
-            'purchase_registry_credit:id,concept,amount,payment_frequency_id,qty_payment,expense_type,remain_payment,created_at',
+            'purchase_registry_credit:id,concept,amount,payment_frequency_id,qty_payment,spend_type,remain_payment,created_at',
             'purchase_registry_credit.payment_frequency:id,frequency',
-            'purchase_registry_frequent:id,concept,amount,expense_type,payment_frequency_id,next_insert_date,created_at',
+            'purchase_registry_frequent:id,concept,amount,spend_type,payment_frequency_id,next_insert_date,created_at',
             'purchase_registry_frequent.payment_frequency:id,frequency',
         ])
         ->where('delete', 0)

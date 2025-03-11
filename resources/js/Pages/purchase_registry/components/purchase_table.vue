@@ -39,7 +39,7 @@ const props = defineProps({
     }
 });
 // emits
-const emit = defineEmits(["reload_table"]);
+const emit = defineEmits(["info_message"]);
 
 // const formattedRegistries = ref(props.registries.map((registry) => ({
 //     ...registry,
@@ -96,7 +96,7 @@ function update_registry_child(data){
             console.error(validationErrors);
         },
         onSuccess:(data) => {
-            // emit('reload_table',data);
+            emit('info_message',data.props.flash.data);
             const updatedRegistries = formatRegistries(data.props.purchase_registries);
 
             // Actualizamos la variable reactiva con los registros formateados

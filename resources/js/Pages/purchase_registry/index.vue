@@ -1,8 +1,12 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import purchase_table from "./components/purchase_table.vue";
+import create_dialog from "./components/create_dialog.vue";
 import { ref, watch } from "vue";
-import { router } from '@inertiajs/vue3'
+import { router } from '@inertiajs/vue3';
+import messageStore from "@/stores/messageStore";
+
+import Button from 'primevue/button';
 
 
 
@@ -38,21 +42,17 @@ const props = defineProps({
 });
 const registries = ref(props.purchase_registries); // Hacer la tabla reactiva
 
-// Watch para actualizar la tabla cuando props.purchase_registries cambie
-// watch(() => props.purchase_registries, (newRegistries) => {
-//   console.log("✅ Se detectó cambio en purchase_registries");
-//   registries.value = [...newRegistries]; // Forzar reactividad
-// });
+const create_dialog_visible = ref(false);
 
+function open_create_dialog(){
+  create_dialog_visible.value = true;
+};
 
-function reload_purchase_table() {
-  router.reload({ 
-    only: ["purchase_registries"],
-    onSuccess: () => {
-      console.log("🔄 Nuevos datos recibidos:", props.purchase_registries);
-      registries.value = [...props.purchase_registries]; 
-    }
-  });
+function show_info_message(data) {
+  mensaje_registro.value = data.message;
+  mensaje_registro_visible.value = true;
+  severity.value = data.severity;
+  messageStore.mostrarMensaje(mensaje_registro, severity.value);
 }
 
 
@@ -67,6 +67,16 @@ function reload_purchase_table() {
         >
         <template #header> Registro Gastos </template>
         <template #main_content>
+          <Button label="Registrar compra" icon="pi pi-plus" @click="open_create_dialog" />
+          <create_dialog
+          :visible="create_dialog_visible"
+          @update:visible="create_dialog_visible = $event"
+          :categoryOptions = "props.categories"
+          :payment_frequency = "props.payment_frequency"
+          :paymentMethodOptions = "props.payment_method"
+          :tdcOptions = "props.tdc"
+          :spendTypeOptions ="props.spend_type"
+          />
             <purchase_table 
             :registries="registries"
             :categories = "props.categories"
@@ -74,7 +84,7 @@ function reload_purchase_table() {
             :payment_method = "props.payment_method"
             :tdc = "props.tdc"
             :spend_type ="props.spend_type"
-            @reload_table="reload_purchase_table"
+            @info_message="show_info_message"
             />
         </template>
     </AppLayout>

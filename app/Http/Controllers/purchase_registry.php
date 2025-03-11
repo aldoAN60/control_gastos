@@ -12,37 +12,25 @@ use App\Models\purchase_registry as PR;
 use App\Services\Validaciones;
 use App\Models\payment_frequency;
 use App\Models\payment_method;
-use App\Models\purchase_registry_credit;
-use App\Models\purchase_registry_frequent;
+use App\Models\purchase_registry_credit as prc;
+use App\Models\purchase_registry_frequent as prf;
 use App\Models\tarjeta_credito;
 
 
 class purchase_registry extends Core
 {
     protected $validaciones;
+    protected $purchase_cases = [
+        '10' => "is_credit",
+        '01' => "is_frequent",
+        '11' => "both",
+        '00' => "none"
+    ];
     public function __construct(Validaciones $validaciones){
         $this->validaciones = $validaciones;
     }
     public function index()
     {
-        // $registries = PR::PurchaseRegistry()->get();
-        // $pr = PR::format_registries($registries);
-        // $categories = category::get_categories();
-        // $payment_frequency = payment_frequency::select('id','frequency','days')->orderBy('days')->get();
-        // $payment_method = payment_method::all();
-        // $tdc = tarjeta_credito::get_tarjetas();
-        // $spend_type = array_values( config('app.spend_type'));
-
-        // $props = [
-        //     'purchase_registries' => $pr, // Asegúrate que el nombre es 'purchase_registries'
-        //     'categories' => $categories,
-        //     'payment_frequency' => $payment_frequency,
-        //     'payment_method' => $payment_method,
-        //     'tdc' => $tdc,
-        //     'spend_type' => $spend_type
-        // ]; 
-        // return response()->json($props);
-        // return inertia::render('purchase_registry/index', $props);
         return Inertia::render('purchase_registry/index', [
             'purchase_registries' => fn () => PR::format_registries(PR::PurchaseRegistry()->get()),
             'categories' => category::get_categories(),
@@ -56,16 +44,13 @@ class purchase_registry extends Core
     public function register_purchase(Request $request){
         $data = $request->all();
         
-        if($request->is('api/*')) {
+        if($request->is(patterns: 'api/*')) {
             $source = 'API';
         } else {
             $source = 'WEB';
         }
-
-        if(empty($data['user_id'])){
-            $data['user_id'] = auth()->user()->id;
-        }
-
+        
+        $case = $this->purchase_cases["{$data['is_credit']}{$data['is_frequent']}"] ?? "none";
         $validation_result = $this->validaciones->purchase_registry_validation($data);
         
         if (!$validation_result['success']) {
@@ -79,6 +64,31 @@ class purchase_registry extends Core
                 return back()->withErrors($validation_result['message'])->withInput();
             }
         }
+
+
+        if(empty($data['user_id'])){
+            $data['user_id'] = auth()->user()->id;
+        }
+        switch ($case) {
+            case 'is_credit':
+                    $prc = prc::create($data);
+                    $data['purchase_registry_credit_id'] = $prc->id;
+                break;
+
+                case 'is_frequent':
+                    $prf = prf::create($data);
+                    $data['purchase_registry_frequent_id'] = $prf->id;
+                break;
+
+            case 'both':
+                    $prc = prc::create($data);
+                    $prf = prf::create($data);
+                    $data['purchase_registry_credit_id'] = $prc->id;
+                    $data['purchase_registry_frequent_id'] = $prf->id;
+                break;
+        }
+
+        
         $registry = PR::create($data);
 
         if(!empty($registry)){
@@ -125,8 +135,7 @@ class purchase_registry extends Core
         } catch (\Exception $e) {
             $response = ['success' => false, 'message' => 'Error inesperado al actualizar el registro', 'severity' => 'error'];
         }
-        // return response()->json($response);
-        return back()->with('response', $response);
+        return to_route('pr.index')->with('data', $response);
 
     }
 }

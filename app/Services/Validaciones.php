@@ -98,6 +98,38 @@ class Validaciones
             'delete.boolean' => 'El valor de eliminado debe ser verdadero o falso.',
         ];
         
+        if ($data['is_credit'] === 1) {
+            $rules = array_merge($rules, [
+                'payment_frequency_id' => 'required|integer|exists:payment_frequency,id',
+                'qty_payment' => 'required|integer',
+                'remain_payment' => 'required|integer',
+            ]);
+        
+            $messages = array_merge($messages, [
+                'payment_frequency_id.required' => 'La frecuencia de pago es obligatoria.',
+                'payment_frequency_id.integer' => 'La frecuencia de pago debe ser un número entero.',
+                'payment_frequency_id.exists' => 'La frecuencia de pago seleccionada no es válida.',
+        
+                'qty_payment.required' => 'La cantidad de pagos es obligatoria.',
+                'qty_payment.integer' => 'La cantidad de pagos debe ser un número entero.',
+        
+                'remain_payment.required' => 'El número de pagos restantes es obligatorio.',
+                'remain_payment.integer' => 'El número de pagos restantes debe ser un número entero.',
+            ]);
+        }
+        
+        if ($data['is_frequent'] === 1) {
+            $rules = array_merge($rules, [
+                'payment_frequency_id' => 'required|integer|exists:payment_frequency,id',
+                'next_insert_date' => 'required|date_format:Y-m-d|after_or_equal:today',
+            ]);
+        
+            $messages = array_merge($messages, [
+                'next_insert_date.required' => 'La próxima fecha de inserción es obligatoria.',
+                'next_insert_date.date_format' => 'La fecha debe estar en el formato YYYY-MM-DD.',
+                'next_insert_date.after_or_equal' => 'La fecha de inserción debe ser hoy o una fecha futura.',
+            ]);
+        }
         $validator = Validator::make($data, $rules, $messages);
         if ($validator->fails()) {
             $result['success'] = false;
