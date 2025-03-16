@@ -31,8 +31,9 @@ class purchase_registry extends Core
     }
     public function index()
     {
+
         return Inertia::render('purchase_registry/index', [
-            'purchase_registries' => fn () => PR::format_registries(PR::PurchaseRegistry()->get()),
+            'purchase_registries' => fn () => PR::format_registries(PR::PurchaseRegistry()->orderBy('created_at', 'desc')->get()),
             'categories' => category::get_categories(),
             'payment_frequency' => payment_frequency::select('id','frequency','days')->orderBy('days')->get(),
             'payment_method' => payment_method::all(),
@@ -49,7 +50,11 @@ class purchase_registry extends Core
         } else {
             $source = 'WEB';
         }
-        
+        if(empty($data['user_id'])){
+            $data['user_id'] = auth()->user()->id;
+        }
+        $data['is_credit'] = (int)$data['is_credit'];
+        $data['is_frequent'] = (int)$data['is_frequent'];
         $case = $this->purchase_cases["{$data['is_credit']}{$data['is_frequent']}"] ?? "none";
         $validation_result = $this->validaciones->purchase_registry_validation($data);
         
@@ -66,9 +71,7 @@ class purchase_registry extends Core
         }
 
 
-        if(empty($data['user_id'])){
-            $data['user_id'] = auth()->user()->id;
-        }
+        
         switch ($case) {
             case 'is_credit':
                     $prc = prc::create($data);
@@ -92,21 +95,25 @@ class purchase_registry extends Core
         $registry = PR::create($data);
 
         if(!empty($registry)){
-
-            return response()->json([
+            $response = [
                 'success' => true,
-                'message' => 'Operación exitosa',
+                'message' => 'registro creado exitosamente',
+                'severity' => 'success',
                 'response' => [
-                    'registry' => $registry,
+                    'registry' => $registry
                 ],
-                'source' => $source,
-            ]);
+            ];
+            return to_route('pr.index')->with('data', $response);
         }else{
-            return response()->json([
+            $response = [
                 'success' => false,
-                'message' => 'no se envio ningun dato',
-                'source' => $source,
-            ]);
+                'message' => 'registro creado exitosamente',
+                'severity' => 'error',
+                'response' => [
+                    'registry' => $registry
+                ],
+            ];
+            return to_route('pr.index')->with('data', $response);
         }
     }
 

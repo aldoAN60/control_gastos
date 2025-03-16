@@ -35,6 +35,7 @@ Route::middleware([
     Route::delete('TDC/eliminar/{id}',[tarjetas_credito::class,'eliminar_tdc'])->name('tdc.eliminar');
 
     /** REGISTRO DE COMPRAS **/
-    Route::get('/registro_compras/index',[purchase_registry::class,'index'])->name('pr.index');
-    Route::put('/registro_compras/update',[purchase_registry::class,'update_registry'])->name('pr.update');
+    Route::get('/purchase_record/main_view',[purchase_registry::class,'index'])->name('pr.index');
+    Route::post('/purchase_record/register_purchase',[purchase_registry::class,'register_purchase'])->name('pr.create');
+    Route::put('/purchase_record/update_purchase',[purchase_registry::class,'update_registry'])->name('pr.update');
 });

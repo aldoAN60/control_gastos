@@ -85,9 +85,9 @@ const onRowContextMenu = (event) => {
 };
 
 /* actulizar y eliminar*/
-function  delete_registry(){
-   console.log("se elimino");
-};
+    function  delete_registry(){
+        console.log("se elimino");
+    };
 
 
 function update_registry_child(data){

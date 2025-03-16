@@ -5,6 +5,8 @@ import create_dialog from "./components/create_dialog.vue";
 import { ref, watch } from "vue";
 import { router } from '@inertiajs/vue3';
 import messageStore from "@/stores/messageStore";
+import { computed } from "vue";
+import { nextTick } from 'vue';
 
 import Button from 'primevue/button';
 
@@ -40,7 +42,9 @@ const props = defineProps({
     required:true
   }
 });
-const registries = ref(props.purchase_registries); // Hacer la tabla reactiva
+const registries = ref(props.purchase_registries); 
+// const registries = computed(() => props.purchase_registries);
+
 
 const create_dialog_visible = ref(false);
 
@@ -48,12 +52,16 @@ function open_create_dialog(){
   create_dialog_visible.value = true;
 };
 
-function show_info_message(data) {
-  mensaje_registro.value = data.message;
-  mensaje_registro_visible.value = true;
-  severity.value = data.severity;
-  messageStore.mostrarMensaje(mensaje_registro, severity.value);
-}
+  function show_info_message(data) {
+    mensaje_registro.value = data.message;
+    mensaje_registro_visible.value = true;
+    severity.value = data.severity;
+    messageStore.mostrarMensaje(mensaje_registro, severity.value);
+    registries.value = [...props.purchase_registries]; // Forzar la actualización al crear una nueva referencia
+
+    console.log(registries);
+  }
+
 
 
 </script>
@@ -76,8 +84,10 @@ function show_info_message(data) {
           :paymentMethodOptions = "props.payment_method"
           :tdcOptions = "props.tdc"
           :spendTypeOptions ="props.spend_type"
+          @info_message="show_info_message"
           />
             <purchase_table 
+            :key="registries.length"
             :registries="registries"
             :categories = "props.categories"
             :payment_frequency = "props.payment_frequency"

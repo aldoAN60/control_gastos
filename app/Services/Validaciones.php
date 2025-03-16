@@ -97,12 +97,12 @@ class Validaciones
         
             'delete.boolean' => 'El valor de eliminado debe ser verdadero o falso.',
         ];
-        
+
         if ($data['is_credit'] === 1) {
             $rules = array_merge($rules, [
                 'payment_frequency_id' => 'required|integer|exists:payment_frequency,id',
-                'qty_payment' => 'required|integer',
-                'remain_payment' => 'required|integer',
+                'qty_payment' => 'required|integer|min:1',
+                'remain_payment' => 'nullable|integer|min:1',
             ]);
         
             $messages = array_merge($messages, [
@@ -112,9 +112,11 @@ class Validaciones
         
                 'qty_payment.required' => 'La cantidad de pagos es obligatoria.',
                 'qty_payment.integer' => 'La cantidad de pagos debe ser un número entero.',
+                'qty_payment.min' => 'La cantidad de pagos restantes no puede ser negativo.',
         
-                'remain_payment.required' => 'El número de pagos restantes es obligatorio.',
                 'remain_payment.integer' => 'El número de pagos restantes debe ser un número entero.',
+                'remain_payment.min' => 'El número de pagos restantes no puede ser negativo.',
+
             ]);
         }
         
