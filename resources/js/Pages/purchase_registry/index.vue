@@ -6,7 +6,7 @@ import { ref, watch } from "vue";
 import { router } from '@inertiajs/vue3';
 import messageStore from "@/stores/messageStore";
 import { computed } from "vue";
-import { nextTick } from 'vue';
+
 
 import Button from 'primevue/button';
 
@@ -42,9 +42,52 @@ const props = defineProps({
     required:true
   }
 });
-const registries = ref(props.purchase_registries); 
-// const registries = computed(() => props.purchase_registries);
 
+// Función para convertir un solo objeto
+function convertData(data) {
+  return {
+    id: Number(data.id),
+    user_id: Number(data.user_id),
+    concept: String(data.concept), 
+    amount: parseFloat(data.amount),
+    category: {
+      id: Number(data.category.id),
+      name: String(data.category.name), 
+    },
+    sub_category: {
+      id: Number(data.sub_category.id),
+      name: String(data.sub_category.name), 
+    },
+    payment_method: {
+      id: Number(data.payment_method.id),
+      method: String(data.payment_method.method), 
+    },
+    spend_type: String(data.spend_type), 
+    purchase_registry_credit: data.purchase_registry_credit ? {
+      id: Number(data.purchase_registry_credit.id),
+      payment_frequency: {
+        id: Number(data.purchase_registry_credit.payment_frequency.id),
+        frequency: String(data.purchase_registry_credit.payment_frequency.frequency), 
+      },
+      qty_payment: Number(data.purchase_registry_credit.qty_payment),
+      remain_payment: Number(data.purchase_registry_credit.remain_payment),
+    } : null,
+    purchase_registry_frequent: data.purchase_registry_frequent ? {
+      id: Number(data.purchase_registry_frequent.id),
+      payment_frequency: {
+        id: Number(data.purchase_registry_frequent.payment_frequency.id),
+        frequency: String(data.purchase_registry_frequent.payment_frequency.frequency), 
+      },
+      next_insert_date: String(data.purchase_registry_frequent.next_insert_date),
+    } : null, 
+    created_at: String(data.created_at),
+    updated_at: String(data.updated_at),
+  };
+}
+
+const registries = computed(() => {
+  return props.purchase_registries.map(convertData);
+});
 
 const create_dialog_visible = ref(false);
 

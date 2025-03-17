@@ -2,14 +2,13 @@
     import { ref, computed } from "vue";
 
     //inertia
-    import { router, useForm } from "@inertiajs/vue3";
+    import { useForm } from "@inertiajs/vue3";
     // prime vue componentes
     import Dialog from "primevue/dialog";
     import InputText from "primevue/inputtext";
     import InputNumber from "primevue/inputnumber";
     import Select from "primevue/select";
     import DatePicker from "primevue/datepicker";
-    import ToggleButton from "primevue/togglebutton";
     import Button from "primevue/button";
     import ToggleSwitch from "primevue/toggleswitch";
 
@@ -24,6 +23,7 @@
         payment_frequency: Array,
         spendTypeOptions: Array,
     });
+    
     // variables for selects
     const tdcOptions = ref(props.tdcOptions);
     const paymentMethodOptions = ref(props.paymentMethodOptions);
@@ -33,10 +33,6 @@
     const subCategoryOptions = computed(() => {
     const category = categoryOptions.value.find(cat => cat.category_id === form.category_id);
     return category ? category.sub_categories : [];
-    });
-    const validation_errors = ref({
-    concept: null,
-    amount: null,
     });
 
 // Restablece la subcategoría cuando cambia la categoría
@@ -279,12 +275,6 @@ const closeDialog = () => {
                 {{ form.errors.remain_payment }}
             </small>
         </div>
-
-        <!-- Botones -->
-        <!-- <div class="flex justify-end">
-            <Button type="button" label="Cancelar" class="p-button-text mr-2" />
-            <Button type="submit" label="Guardar" class="p-button-primary" />
-        </div> -->
     </form>
         <template #footer>
             <Button label="Cancelar" icon="pi pi-times" @click="closeDialog" class="p-button-text" />

@@ -20,6 +20,11 @@ class purchase_registry_credit extends Model
         'paid',
         'delete',
         'spend_type',
+        'created_at'
+    ];
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d',
+        'updated_at' => 'datetime:Y-m-d',
     ];
     
     public function payment_frequency(){

@@ -49,8 +49,8 @@ class Validaciones
             'sub_category_id' => 'required|integer|exists:categories,id',
             'spend_type' => 'required|string|in:necesario,secundario,precindible',
             'payment_method_id' => 'required|integer|exists:payment_method,id',
-            'purchase_registry_frequent_id' => 'nullable|integer,exists:purchase_registry_frequent,id',
-            'purchase_registry_credit_id' => 'nullable|integer,exists:purchase_registry_credit,id',
+            'purchase_registry_frequent_id' => 'nullable|integer|exists:purchase_registry_frequent,id',
+            'purchase_registry_credit_id' => 'nullable|integer|exists:purchase_registry_credit,id',
             'delete' => 'nullable|boolean',
         ];
 
@@ -100,15 +100,14 @@ class Validaciones
 
         if ($data['is_credit'] === 1) {
             $rules = array_merge($rules, [
-                'payment_frequency_id' => 'required|integer|exists:payment_frequency,id',
+                'credit_payment_frequency_id' => 'required|integer|exists:payment_frequency,id',
                 'qty_payment' => 'required|integer|min:1',
                 'remain_payment' => 'nullable|integer|min:1',
             ]);
         
             $messages = array_merge($messages, [
-                'payment_frequency_id.required' => 'La frecuencia de pago es obligatoria.',
-                'payment_frequency_id.integer' => 'La frecuencia de pago debe ser un número entero.',
-                'payment_frequency_id.exists' => 'La frecuencia de pago seleccionada no es válida.',
+                'credit_payment_frequency_id.required' => 'La frecuencia de pago es obligatoria.',
+                'credit_payment_frequency_id.exists' => 'La frecuencia de pago seleccionada no es válida.',
         
                 'qty_payment.required' => 'La cantidad de pagos es obligatoria.',
                 'qty_payment.integer' => 'La cantidad de pagos debe ser un número entero.',
@@ -122,11 +121,14 @@ class Validaciones
         
         if ($data['is_frequent'] === 1) {
             $rules = array_merge($rules, [
-                'payment_frequency_id' => 'required|integer|exists:payment_frequency,id',
+                'frequent_payment_frequency_id' => 'required|integer|exists:payment_frequency,id',
                 'next_insert_date' => 'required|date_format:Y-m-d|after_or_equal:today',
             ]);
         
             $messages = array_merge($messages, [
+                'frequent_payment_frequency_id.required' => 'La frecuencia de pago es obligatoria.',
+                'frequent_payment_frequency_id.exists' => 'La frecuencia de pago seleccionada no es válida.',
+
                 'next_insert_date.required' => 'La próxima fecha de inserción es obligatoria.',
                 'next_insert_date.date_format' => 'La fecha debe estar en el formato YYYY-MM-DD.',
                 'next_insert_date.after_or_equal' => 'La fecha de inserción debe ser hoy o una fecha futura.',

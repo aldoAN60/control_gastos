@@ -41,10 +41,6 @@ const props = defineProps({
 // emits
 const emit = defineEmits(["info_message"]);
 
-// const formattedRegistries = ref(props.registries.map((registry) => ({
-//     ...registry,
-//     formattedDate: formatDate(registry.created_at), // Formatear la fecha
-// })));
 
 // Función para formatear los registros
 function formatRegistries(registries) {
@@ -59,12 +55,10 @@ const formattedRegistries = ref(formatRegistries(props.registries));
 
 const edit_dialog_visible = ref(false);
 const selected_registry = ref({});
-const registry_to_update = ref({});
+const regitry_to_update = ref({});
 
 function open_edit_dialog() {
-    registry_to_update.value = selected_registry.value;
-        
-    
+    regitry_to_update.value = selected_registry.value;
     edit_dialog_visible.value = true;
 }
 
@@ -82,6 +76,7 @@ const onRowContextMenu = (event) => {
     
     selected_registry.value = event.data;
     cm.value.show(event.originalEvent);
+    
 };
 
 /* actulizar y eliminar*/
@@ -109,7 +104,7 @@ function update_registry_child(data){
 </script>
 
 <template>
-
+<!--  -->
     <ContextMenu ref="cm" :model="menuModel" @hide="selected_registry = null" />
     <DataTable
         :value="formattedRegistries"
@@ -130,14 +125,19 @@ function update_registry_child(data){
         <Column field="formattedDate" header="Fecha de la compra"/>
         <Column field="sub_category.name" header="Sub categoría"/>
     </DataTable>
+    
     <edit_dialog 
-        :visible="edit_dialog_visible"
-        @update:visible="edit_dialog_visible = $event"
-        :selected_registry="registry_to_update"
-        :categoryOptions = "categories"
-        :paymentMethodOptions="payment_method"
-        :tdcOptions="tdc"
-        :spendTypeOptions="spend_type"
-        @update_registry="update_registry_child"
-    />
+    v-if="edit_dialog_visible"
+    :visible="edit_dialog_visible"
+    @update:visible="edit_dialog_visible = $event"
+    :selected_registry="regitry_to_update"
+    :categoryOptions="categories"
+    :paymentMethodOptions="payment_method"
+    :payment_frequency="payment_frequency"
+    :tdcOptions="tdc"
+    :spendTypeOptions="spend_type"
+    @update_registry="update_registry_child"
+/>
+
+
 </template>
