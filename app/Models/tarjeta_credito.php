@@ -22,8 +22,8 @@ class tarjeta_credito extends Model
     public function purchase_registry(){
         return $this->hasMany(purchase_registry::class, 'tdc_id');
     }
-    public function banco(){
-        return $this->belongsTo(banks::class, 'bank_id');
+    public function bank(){
+        return $this->belongsTo(banks::class, 'bank_id','id');
     }
 
     public static function get_tarjetas(){

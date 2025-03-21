@@ -81,6 +81,7 @@ const assignUpdatedRegistry = (registry) => {
 
 // varaibles for props    
     const registry = ref(format_registry(props.selected_registry));
+    const tdcOptions = ref(props.tdcOptions);
     const categoryOptions = ref(props.categoryOptions);
     const paymentMethodOptions = ref(props.paymentMethodOptions);
     const paymentFrequencyOptions = ref(props.payment_frequency);
@@ -124,19 +125,26 @@ const assignUpdatedRegistry = (registry) => {
     // Función para mostrar/ocultar campos de compra frecuente
     const toggleFrequentFields = () => {
         if (!registry.is_frequent) {
-            registry.value.purchase_registry_frequent.next_insert_date = null;
-            registry.value.purchase_registry_frequent.payment_frequency = null;
+            if(registry.value.purchase_registry_frequent){
+                registry.value.purchase_registry_frequent.next_insert_date = null;
+                registry.value.purchase_registry_frequent.payment_frequency = null;
+            }
         }
     };
 
     // Función para mostrar/ocultar campos de compra a crédito
     const toggleCreditFields = () => {
         if (!registry.is_credit) {
-            registry.value.purchase_registry_credit.qty_payment = null;
-            registry.value.purchase_registry_credit.payment_frequency = null;
-            registry.value.purchase_registry_credit.remain_payment = null;
+            if (registry.value.purchase_registry_credit) {
+                registry.value.purchase_registry_credit.qty_payment = null;
+                registry.value.purchase_registry_credit.payment_frequency = null;
+                registry.value.purchase_registry_credit.remain_payment = null;
+            }
+
         }
     };
+
+
 
 const selectedCreditPaymentFrequency = computed({
     get() {
@@ -162,6 +170,11 @@ const selectedCreditQtyPayments = computed({
             registry.value.purchase_registry_credit = {};
         }
         registry.value.purchase_registry_credit.qty_payment = value;
+
+        // Solo asignar remain_payment si aún no ha sido definido
+        if (registry.value.purchase_registry_credit.remain_payment == null) {
+            registry.value.purchase_registry_credit.remain_payment = value;
+        }
     },
 });
 
@@ -247,6 +260,14 @@ const createdAtDate = computed({
     }
 });
 
+
+
+const tdcOptionsFormatted = computed(() => {
+        return tdcOptions.value.map(tdc => ({
+            value: tdc.id,
+            label: `${tdc.alias} - ${tdc.name}`,
+        }));
+    });
 </script>
 
 <template>
@@ -270,18 +291,7 @@ const createdAtDate = computed({
                 <InputNumber id="amount" v-model="registry.amount" mode="currency" currency="MXN" locale="es-MX" />
             </div>
 
-            <!-- Tarjeta de Crédito -->
-            <div class="field" v-if="registry.tdc">
-                <label for="tdc">Tarjeta de Crédito</label>
-                <Select 
-                    id="tdc" 
-                    v-model="registry.tdc.id" 
-                    :options="tdcOptions" 
-                    optionLabel="alias" 
-                    optionValue="id"
-                    placeholder="Selecciona una tarjeta"
-                />
-            </div>
+            
 
             <!-- Categoría -->
             <div class="field">
@@ -322,7 +332,19 @@ const createdAtDate = computed({
                     placeholder="Selecciona un método de pago"
                 />
             </div>
-            
+
+                <!-- Select Tarjeta de Crédito -->
+                <div class="field" v-if="registry.payment_method.id == 1">
+                    <label for="tdc">Tarjeta de Crédito</label>
+                    <Select 
+                        id="tdc" 
+                        v-model="registry.tdc" 
+                        :options="tdcOptionsFormatted" 
+                        optionLabel="label" 
+                        optionValue="value"
+                        placeholder="Selecciona una tarjeta"
+                    />
+                </div>         
 
             <!-- Tipo de Gasto -->
             <div class="field">
@@ -389,7 +411,7 @@ const createdAtDate = computed({
                     <DatePicker 
                         id="nextInsertDate" 
                         v-model="selectedFrequentNextInsertDate" 
-                        dateFormat="dd/mm/yy"
+                        dateFormat="dd 'de' MM 'del' yy" 
                     />
                 </div>
             </div>

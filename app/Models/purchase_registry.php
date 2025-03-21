@@ -70,7 +70,7 @@ class purchase_registry extends Model
         return $query->with([
             'user:id,nombre,apellido_paterno,apellido_materno,email',
             'tdc:id,alias,bank_id',
-            'tdc.banco:id,name', 
+            'tdc.bank:id,name', 
             'category:id,name',
             'sub_category:id,name',
             'payment_method:id,method',
@@ -143,6 +143,7 @@ class purchase_registry extends Model
 
     private static function format_tdc($tdc)
     {
+       
         if (empty($tdc)) {
             return null;
         }
@@ -150,7 +151,7 @@ class purchase_registry extends Model
             'id' => $tdc['id'],
             'alias' => $tdc['alias'],
             'bank_id' => $tdc['bank_id'],
-            'bank_name' => $tdc['banco']['nombre'] ?? null,
+            'bank_name' => $tdc['bank']['name'] ?? null,
         ];
     }
 

@@ -43,11 +43,18 @@ const props = defineProps({
   }
 });
 
+
 // Función para convertir un solo objeto
 function convertData(data) {
   return {
     id: Number(data.id),
     user_id: Number(data.user_id),
+    tdc: data.tdc ? {
+      id: Number(data.tdc.id),
+      alias: String(data.tdc.alias),
+      bank_id: Number(data.tdc.bank_id),
+      bank_name: String(data.tdc.bank_name)
+    } : null,
     concept: String(data.concept), 
     amount: parseFloat(data.amount),
     category: {

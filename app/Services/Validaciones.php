@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 class Validaciones
 {
     public static function tdc($data)
@@ -39,10 +40,14 @@ class Validaciones
     }
     public static function purchase_registry_validation($data){
         $result = [];
-
         $rules = [
             'user_id' => 'required|integer|exists:users,id',
-            'tdc_id' => 'nullable|integer|exists:tdc,id',
+            'tdc_id' => [
+                            'nullable',
+                            'integer',
+                            'exists:tdc,id',
+                            Rule::requiredIf($data['payment_method_id'] == 1),
+                        ],
             'concept' => 'required|string|max:24|min:4|regex:/^[a-zA-Z0-9\s]+$/',
             'amount' => 'required|numeric|min:1',
             'category_id' => 'required|integer|exists:categories,id',
@@ -61,7 +66,8 @@ class Validaciones
         
             'tdc_id.integer' => 'El ID de la tarjeta debe ser un número.',
             'tdc_id.exists' => 'La tarjeta seleccionada no existe en la base de datos.',
-        
+            'tdc_id.required' => 'La tarjeta de credito es obligatoria.',
+            
             'concept.required' => 'El concepto es obligatorio.',
             'concept.string' => 'El concepto debe ser una cadena de texto.',
             'concept.max' => 'El concepto no puede tener más de 24 caracteres.',
@@ -98,23 +104,30 @@ class Validaciones
             'delete.boolean' => 'El valor de eliminado debe ser verdadero o falso.',
         ];
 
-        if ($data['is_credit'] === 1) {
-            $rules = array_merge($rules, [
-                'credit_payment_frequency_id' => 'required|integer|exists:payment_frequency,id',
-                'qty_payment' => 'required|integer|min:1',
-                'remain_payment' => 'nullable|integer|min:1',
-            ]);
+            if ($data['is_credit'] === 1) {
+                $rules = array_merge($rules, [
+                    'credit_payment_frequency_id' => 'required|integer|exists:payment_frequency,id',
+                    'qty_payment' => 'required|integer|min:1',
+                    'remain_payment' => [
+                                        'required',
+                                        'integer',
+                                        'min:1',
+                                        "lte:qty_payment"
+                                    ],
+                ]);
         
             $messages = array_merge($messages, [
                 'credit_payment_frequency_id.required' => 'La frecuencia de pago es obligatoria.',
                 'credit_payment_frequency_id.exists' => 'La frecuencia de pago seleccionada no es válida.',
         
-                'qty_payment.required' => 'La cantidad de pagos es obligatoria.',
-                'qty_payment.integer' => 'La cantidad de pagos debe ser un número entero.',
-                'qty_payment.min' => 'La cantidad de pagos restantes no puede ser negativo.',
-        
+                'qty_payment.required' => 'La cantidad de pagos totales es obligatoria.',
+                'qty_payment.integer' => 'La cantidad de pagos totales debe ser un número entero.',
+                'qty_payment.min' => 'La cantidad de pagos totales no puede ser negativo.',
+                
+                'remain_payment.required' => 'El número de pagos restantes es obligatorio.',
                 'remain_payment.integer' => 'El número de pagos restantes debe ser un número entero.',
                 'remain_payment.min' => 'El número de pagos restantes no puede ser negativo.',
+                'remain_payment.lte' => 'El nùmero de pagos restantes no puede ser mayor a la cantidad de pagos totales'
 
             ]);
         }

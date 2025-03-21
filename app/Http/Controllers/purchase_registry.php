@@ -31,7 +31,6 @@ class purchase_registry extends Core
     }
     public function index()
     {
-
         return Inertia::render('purchase_registry/index', [
             'purchase_registries' => fn () => PR::format_registries(PR::PurchaseRegistry()->orderBy('created_at', 'desc')->get()),
             'categories' => category::get_categories(),
