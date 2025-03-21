@@ -126,7 +126,7 @@ const assignUpdatedRegistry = (registry) => {
     };
  
 
-    const emit = defineEmits(["update:visible", "update_registry"]);
+    const emit = defineEmits(["update:visible", "update_success_message"]);
 
 
 
@@ -136,25 +136,22 @@ const assignUpdatedRegistry = (registry) => {
 
     function update_registry(){
         assignUpdatedRegistry(registry.value);
-        console.log(updated_registry.value);
         router.put(route('pr.update'),updated_registry.value, {
             onSuccess:(data) => {
-                console.info(data.props.flash.data);
+                const response = data.props.flash.data;
+                console.info(response);
+
+                if(data.props.flash.data.success === response.success ){
+                    toast.add({ severity: response.severity, summary:'Parece que hubo un error', detail: response.message, life: 4000 });
+                }
                 clearErrors();
-                // emit("update_registry", updated_registry.value);
+                emit("update_success_message", response);
                 closeDialog();
             },
             onError: (validationErrors) => {
                 clearErrors();
-                errors.value = validationErrors;
-                let life = 3000;
-                for (const key in errors.value) {
-                    if (errors.value.hasOwnProperty(key)) {
-                       
-                        toast.add({ severity: 'error', summary:'error', detail: errors.value[key], life: life });
-                        life += 1000;
-                    }
-}
+                errors.value = validationErrors;      
+                    toast.add({ severity: 'error', summary:'Parece que hubo un error', detail: 'Falta información en el formulario', life: 4000 });
             }
         });
         

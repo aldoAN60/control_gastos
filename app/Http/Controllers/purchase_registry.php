@@ -109,17 +109,23 @@ class purchase_registry extends Core
         if (!$validation_result['success']) {
             return back()->withErrors($validation_result['message'])->withInput();
         }
+
         // verifica si el usuario elimino el gasto como un gasto a credito 
         if($data['is_credit'] == 0 && $data['purchase_registry_credit_id'] && (!$data['credit_payment_frequency_id'] && !$data['qty_payment'] && !$data['remain_payment'])){
+            
             // si se cumple la condicion se hace un softdelete en la tabla purchase_registry_credit
             $this->delete_row(prc::class,  $data['purchase_registry_credit_id'], 'soft');
+            
             // Establece el valor de 'purchase_registry_credit_id' a null después de eliminarlo
             $data['purchase_registry_credit_id'] = null;
         }
+        
         // verifica si el usuario elimino el gasto como un gasto a frecuente 
         if($data['is_frequent'] == 0 && $data['purchase_registry_frequent_id'] && (!$data['frequent_payment_frequency_id'] && !$data['next_insert_date'])){
+            
             // si se cumple la condicion se hace un softdelete en la tabla purchase_registry_frequent
             $this->delete_row(prf::class,  $data['purchase_registry_frequent_id'], 'soft');
+            
             // Establece el valor de 'purchase_registry_frequent_id' a null después de eliminarlo
             $data['purchase_registry_frequent_id'] = null;
         }

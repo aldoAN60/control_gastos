@@ -6,10 +6,13 @@ import { ref, watch } from "vue";
 import { router } from '@inertiajs/vue3';
 import messageStore from "@/stores/messageStore";
 import { computed } from "vue";
+import { useToast } from "primevue/usetoast";
 
 
 import Button from 'primevue/button';
 
+//toast message
+const toast = useToast();
 
 
 // variables reactivas
@@ -112,6 +115,15 @@ function open_create_dialog(){
     console.log(registries);
   }
 
+  function show_toast(message_info) {
+   
+    generate_toast_message( message_info.severity, message_info.message);
+  }
+  // Función para generar el mensaje del Toast
+  function generate_toast_message(severity = "info", detail, summary = "Notificación", life = 3000) {
+    toast.add({ severity:severity, summary:summary, detail:detail, group:'tr', life:life });
+  }
+
 
 
 </script>
@@ -144,8 +156,9 @@ function open_create_dialog(){
             :payment_method = "props.payment_method"
             :tdc = "props.tdc"
             :spend_type ="props.spend_type"
-            @info_message="show_info_message"
+            @update_success_message="show_toast"
             />
         </template>
     </AppLayout>
+    <Toast group="tr" position="top-right" />
 </template>

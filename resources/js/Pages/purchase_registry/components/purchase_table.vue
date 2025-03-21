@@ -39,7 +39,7 @@ const props = defineProps({
     }
 });
 // emits
-const emit = defineEmits(["info_message"]);
+const emit = defineEmits(["update_success_message"]);
 
 
 // Función para formatear los registros
@@ -85,20 +85,8 @@ const onRowContextMenu = (event) => {
     };
 
 
-function update_registry_child(data){
-    router.put(route('pr.update'),data, {
-        onError:(validationErrors) => {
-            console.error(validationErrors);
-        },
-        onSuccess:(data) => {
-            emit('info_message',data.props.flash.data);
-            const updatedRegistries = formatRegistries(data.props.purchase_registries);
-
-            // Actualizamos la variable reactiva con los registros formateados
-            formattedRegistries.value = updatedRegistries;
-            edit_dialog_visible.value = false;
-        }
-    });
+function update_success_message(success_info_message){
+    emit('update_success_message', success_info_message);
 }
 
 </script>
@@ -136,7 +124,7 @@ function update_registry_child(data){
     :payment_frequency="payment_frequency"
     :tdcOptions="tdc"
     :spendTypeOptions="spend_type"
-    @update_registry="update_registry_child"
+    @update_success_message="update_success_message"
 />
 
 
