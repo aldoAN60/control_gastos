@@ -64,7 +64,7 @@ class Validaciones
             'user_id.integer' => 'El ID del usuario debe ser un número.',
             'user_id.exists' => 'El usuario seleccionado no existe en la base de datos.',
         
-            'tdc_id.integer' => 'El ID de la tarjeta debe ser un número.',
+            'tdc_id.integer' => 'La tarjeta de credito es obligatoria.',
             'tdc_id.exists' => 'La tarjeta seleccionada no existe en la base de datos.',
             'tdc_id.required' => 'La tarjeta de credito es obligatoria.',
             

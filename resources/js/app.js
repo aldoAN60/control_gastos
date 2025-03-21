@@ -9,6 +9,8 @@ import PrimeVue from 'primevue/config';
 import 'primeicons/primeicons.css';
 import { definePreset } from '@primevue/themes';
 import ConfirmationService from 'primevue/confirmationservice';
+import ToastService from 'primevue/toastservice';
+import Toast from 'primevue/toast';
 
 import messageStore from "@/stores/messageStore";
 import Aura from '@primevue/themes/aura';
@@ -271,6 +273,8 @@ createInertiaApp({
             })
             .use(ZiggyVue)
             .use(ConfirmationService)
+            .use(ToastService)
+            .component('Toast', Toast) 
             .mount(el);
     },
     progress: {
